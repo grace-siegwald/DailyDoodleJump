@@ -18,4 +18,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DailyDoodle.Core\DailyDoodle.Core.csproj" />
+  </ItemGroup>
+
 </Project>
