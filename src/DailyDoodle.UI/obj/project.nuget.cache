@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LlFtop7f4F0=",
+  "dgSpecHash": "G5o3aCHBBV4=",
   "success": true,
-  "projectFilePath": "C:\\Mac\\Home\\Documents\\DailyDoodleJump\\src\\DailyDoodle.UI\\DailyDoodle.UI.csproj",
+  "projectFilePath": "C:\\Mac\\Home\\Documents\\GitHub\\DailyDoodleJump\\src\\DailyDoodle.UI\\DailyDoodle.UI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\grace.siegwald\\.nuget\\packages\\microsoft.aspnetcore.authorization\\10.0.13\\microsoft.aspnetcore.authorization.10.0.13.nupkg.sha512",
     "C:\\Users\\grace.siegwald\\.nuget\\packages\\microsoft.aspnetcore.components\\10.0.13\\microsoft.aspnetcore.components.10.0.13.nupkg.sha512",

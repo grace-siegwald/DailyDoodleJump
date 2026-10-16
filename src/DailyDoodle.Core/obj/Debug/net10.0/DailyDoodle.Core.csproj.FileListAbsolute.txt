@@ -1,0 +1,13 @@
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\bin\Debug\net10.0\DailyDoodle.Core.deps.json
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\bin\Debug\net10.0\DailyDoodle.Core.dll
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\bin\Debug\net10.0\DailyDoodle.Core.pdb
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.AssemblyInfoInputs.cache
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.AssemblyInfo.cs
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.csproj.CoreCompileInputs.cache
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.sourcelink.json
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.dll
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\refint\DailyDoodle.Core.dll
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoodle.Core.pdb
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\ref\DailyDoodle.Core.dll
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.Core\obj\Debug\net10.0\DailyDoo.2DDFAA4F.Up2Date

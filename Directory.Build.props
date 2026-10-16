@@ -1,0 +1,25 @@
+<Project>
+
+  <!-- Shared settings for every project under this folder (src/ and tests/). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Makes the .editorconfig style rules show up as build warnings, not just in the IDE. -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+
+    <!-- Project info -->
+    <Authors>Daily Doodle Jump Team</Authors>
+    <RepositoryUrl>https://github.com/YOUR-ORG/DailyDoodleJump</RepositoryUrl>
+  </PropertyGroup>
+
+  <!-- Strict on CI only: GitHub Actions sets CI=true, so warnings fail the pipeline
+       but don't block anyone experimenting locally. -->
+  <PropertyGroup Condition="'$(CI)' == 'true'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>

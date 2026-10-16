@@ -1,0 +1,2 @@
+C:\Mac\Home\Documents\GitHub\DailyDoodleJump\src\DailyDoodle.UI\wwwroot\exampleJsInterop.js
+wwwroot\exampleJsInterop.js

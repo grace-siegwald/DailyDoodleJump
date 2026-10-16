@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="src/DailyDoodle.Core/DailyDoodle.Core.csproj" />
   <Project Path="src/DailyDoodle.UI/DailyDoodle.UI.csproj" />
-  <Project Path="src/DailyDoodleJump/DailyDoodleJump.csproj" />
+  <Project Path="src/DailyDoodle.Web/DailyDoodle.Web.csproj" />
 </Solution>
