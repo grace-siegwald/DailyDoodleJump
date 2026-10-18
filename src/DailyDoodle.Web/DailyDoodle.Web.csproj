@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DailyDoodle.Core\DailyDoodle.Core.csproj" />
-    <ProjectReference Include="..\DailyDoodle.Kni\DailyDoodle.Kni.csproj" />
     <ProjectReference Include="..\DailyDoodle.UI\DailyDoodle.UI.csproj" />
   </ItemGroup>
 

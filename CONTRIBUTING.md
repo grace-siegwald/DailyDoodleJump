@@ -67,8 +67,7 @@ with `/` work locally but break on GitHub Pages.
 
 | Project | What goes in it |
 |---|---|
-| `src/DailyDoodle.Core` | Game logic: level generation, physics, scoring, streaks. No UI code. |
-| `src/DailyDoodle.Kni` | The KNI game class: reads input, calls into `Core`, draws sprites. No game rules. |
+| `src/DailyDoodle.Core` | The game: level generation, physics, scoring, streaks, and the KNI game class (`DailyDoodleGame`) that reads input and draws. Keep game rules in plain classes with no KNI types, so they can be unit tested. |
 | `src/DailyDoodle.UI` | Reusable Razor components. |
 | `src/DailyDoodle.Web` | The app itself: pages, layout, startup. |
 | `tests/DailyDoodle.Core.Tests` | Unit tests for `Core`. |
