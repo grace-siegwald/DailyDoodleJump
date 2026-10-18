@@ -113,3 +113,18 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+/* ---------- Game canvas (Pages/Home.razor) ---------- */
+
+/* Fills the window, because KNI sizes the canvas to the window. The game letterboxes itself inside. */
+#canvasHolder {
+    position: fixed;
+    inset: 0;
+    background: #2b2b2b;
+}
+
+#theCanvas {
+    display: block;
+    /* Stops the browser from scrolling or zooming when a finger is on the game. */
+    touch-action: none;
+}
