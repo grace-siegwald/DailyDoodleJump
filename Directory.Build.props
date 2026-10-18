@@ -10,6 +10,13 @@
     <!-- Project info -->
     <Authors>Daily Doodle Jump Team</Authors>
     <RepositoryUrl>https://github.com/grace-siegwald/DailyDoodleJump</RepositoryUrl>
+
+    <!--
+      KNI game framework version. Every nkast.* package uses this, so they always match.
+      When you change it, also update the nkast.Wasm script versions in
+      src/DailyDoodle.Web/wwwroot/index.html (see the comment there).
+    -->
+    <KniVersion>4.3.9001</KniVersion>
   </PropertyGroup>
 
 </Project>

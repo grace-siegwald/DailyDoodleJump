@@ -59,7 +59,8 @@ Play it like a real user would. Useful browser dev tools (**F12**):
 - **Device toolbar (Ctrl+Shift+M)** – check it works at phone sizes.
 
 **Tip:** use relative paths for images and links (`images/doodle.png`, not
-`/images/doodle.png`). The live site runs at `/DailyDoodleJump/`, so paths starting
+`/images/doodle.png`). This includes images the game loads, such as
+`LoadTexture("images/player.png")`. The live site runs at `/DailyDoodleJump/`, so paths starting
 with `/` work locally but break on GitHub Pages.
 
 **Where code goes:**
@@ -67,6 +68,7 @@ with `/` work locally but break on GitHub Pages.
 | Project | What goes in it |
 |---|---|
 | `src/DailyDoodle.Core` | Game logic: level generation, physics, scoring, streaks. No UI code. |
+| `src/DailyDoodle.Kni` | The KNI game class: reads input, calls into `Core`, draws sprites. No game rules. |
 | `src/DailyDoodle.UI` | Reusable Razor components. |
 | `src/DailyDoodle.Web` | The app itself: pages, layout, startup. |
 | `tests/DailyDoodle.Core.Tests` | Unit tests for `Core`. |

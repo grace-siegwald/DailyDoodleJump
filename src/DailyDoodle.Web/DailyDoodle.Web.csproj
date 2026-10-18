@@ -10,10 +10,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.13" PrivateAssets="all" />
+
+    <!-- KNI's browser (WebGL) backend. The version comes from Directory.Build.props. -->
+    <PackageReference Include="nkast.Kni.Platform.Blazor.GL" Version="$(KniVersion)" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DailyDoodle.Core\DailyDoodle.Core.csproj" />
+    <ProjectReference Include="..\DailyDoodle.Kni\DailyDoodle.Kni.csproj" />
     <ProjectReference Include="..\DailyDoodle.UI\DailyDoodle.UI.csproj" />
   </ItemGroup>
 

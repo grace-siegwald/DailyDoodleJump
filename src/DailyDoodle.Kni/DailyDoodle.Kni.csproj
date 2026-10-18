@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The KNI game: drawing, input, and the per-frame loop.
+    Game rules (physics, level generation, streaks) stay in DailyDoodle.Core so they can be unit tested
+    without KNI. This project only references the platform-neutral KNI packages; the browser backend
+    (nkast.Kni.Platform.Blazor.GL) is referenced by DailyDoodle.Web.
+    Target framework, nullable and implicit usings come from Directory.Build.props.
+  -->
+  <PropertyGroup>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nkast.Xna.Framework" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Content" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Game" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Graphics" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Input" Version="$(KniVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DailyDoodle.Core\DailyDoodle.Core.csproj" />
+  </ItemGroup>
+
+</Project>

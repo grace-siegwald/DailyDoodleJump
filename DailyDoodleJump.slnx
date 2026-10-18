@@ -4,6 +4,7 @@
     <Project Path="tests/DailyDoodle.Core.Tests/DailyDoodle.Core.Tests.csproj" />
   </Folder>
   <Project Path="src/DailyDoodle.Core/DailyDoodle.Core.csproj" />
+  <Project Path="src/DailyDoodle.Kni/DailyDoodle.Kni.csproj" />
   <Project Path="src/DailyDoodle.UI/DailyDoodle.UI.csproj" />
   <Project Path="src/DailyDoodle.Web/DailyDoodle.Web.csproj" />
 </Solution>
