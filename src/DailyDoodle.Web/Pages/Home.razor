@@ -1,7 +1,54 @@
 ﻿@page "/"
+@layout GameLayout
+@implements IAsyncDisposable
+@using DailyDoodle.Core
+@inject IJSRuntime JS
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Daily Doodle Jump</PageTitle>
 
-<h1>Hello, world!</h1>
+@*
+    KNI draws into the canvas with id "theCanvas" (the id is fixed inside KNI) and keeps it
+    the size of the browser window. The game letterboxes its 400x640 play area inside it.
+    Other UI (streak, menus) can go on top of this as HTML overlays.
+*@
+<div id="canvasHolder">
+    <canvas id="theCanvas"></canvas>
+</div>
 
-Welcome to your new app.
+@code {
+    private DotNetObjectReference<Home>? _self;
+    private DailyDoodleGame? _game;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        // The canvas exists only after the first render. Start the browser's frame loop (wwwroot/js/game-loop.js).
+        _self = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("initRenderJS", _self);
+    }
+
+    // Called by game-loop.js once per browser frame.
+    [JSInvokable]
+    public void TickDotNet()
+    {
+        if (_game is null)
+        {
+            _game = new DailyDoodleGame();
+            _game.Run();
+        }
+
+        _game.Tick();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Leaving the page removes the canvas, so stop the frame loop before shutting the game down.
+        await JS.InvokeVoidAsync("stopRenderJS");
+        _game?.Dispose();
+        _self?.Dispose();
+    }
+}
