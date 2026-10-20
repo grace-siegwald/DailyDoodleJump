@@ -1,7 +1,39 @@
-﻿@page "/"
+@page "/"
+@inject GameSession Session
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@Session.CurrentGame.Title</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1 class="visually-hidden">@Session.CurrentGame.Title</h1>
 
-Welcome to your new app.
+<section class="card game-card" aria-label="Game">
+    <div class="stats">
+        <div class="stat">
+            <span class="stat-label">Score</span>
+            <span class="stat-value" aria-label="Score not available yet">&mdash;</span>
+        </div>
+        <div class="stat stat-end">
+            <span class="stat-label">Level</span>
+            <span class="stat-value" aria-label="Level not available yet">&mdash;</span>
+        </div>
+    </div>
+
+    <LevelPreview Seed="todaySeed" AriaLabel="@($"Preview of today's level, {todayText}")" />
+
+    <p class="caption">Today's level &middot; @todayText</p>
+</section>
+
+<GameControls Enabled="false"
+              DisabledReason="Controls turn on once gameplay is built." />
+
+@code {
+    // UTC date, matching DailySeed.ForToday(), so the label and the level always agree.
+    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
+    private ulong todaySeed;
+    private string todayText = "";
+
+    protected override void OnInitialized()
+    {
+        todaySeed = DailySeed.ForDate(today);
+        todayText = today.ToString("MMMM d, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+    }
+}

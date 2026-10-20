@@ -1,0 +1,48 @@
+.game-controls {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: var(--space-3, 1.5rem);
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  padding: 0;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: var(--color-text, #171717);
+  border: 1px solid var(--color-border, #E5E5E5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.control:hover:not(:disabled) {
+  background: var(--color-surface, #FAFAFA);
+}
+
+.control:active:not(:disabled) {
+  border-color: var(--color-accent, #34A853);
+}
+
+.control:disabled {
+  cursor: not-allowed;
+  color: #9A9A9A;
+}
+
+.control .icon {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2;
+}
+
+.disabled-reason {
+  margin-top: var(--space-2, 1rem);
+  text-align: center;
+  color: var(--color-text-secondary, #777777);
+  font-size: 0.8125rem;
+}

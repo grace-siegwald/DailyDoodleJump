@@ -1,0 +1,83 @@
+.game-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 1rem);
+  width: 100%;
+  padding: 0.875rem;
+  text-align: left;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border, #E5E5E5);
+  border-radius: var(--radius, 14px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.game-row:hover {
+  background: var(--color-surface, #FAFAFA);
+}
+
+.game-row.current {
+  border: 1.5px solid var(--color-accent, #34A853);
+  background: #F7FCF8;
+}
+
+.thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--color-accent, #34A853);
+  color: #FFFFFF;
+}
+
+.initial {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.title-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.title {
+  color: var(--color-text, #171717);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-accent-soft, #EAF6EC);
+  color: var(--color-accent-text, #1E7B3A);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.desc {
+  color: var(--color-text-secondary, #777777);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.chevron {
+  width: 20px;
+  height: 20px;
+  color: #9A9A9A;
+}

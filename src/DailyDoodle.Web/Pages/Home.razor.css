@@ -1,0 +1,41 @@
+.game-card {
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem 0.875rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-end {
+  align-items: flex-end;
+}
+
+.stat-label {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  margin-top: 0.5rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}

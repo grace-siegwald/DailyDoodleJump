@@ -1,0 +1,41 @@
+@* Three round controls under the game: move left, pause/resume, move right.
+   Pass Enabled="true" and the callbacks once gameplay exists. *@
+
+<div class="game-controls" role="group" aria-label="Game controls">
+    <button type="button" class="control" aria-label="Move left"
+            disabled="@(!Enabled)" @onclick="OnLeft">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+
+    <button type="button" class="control" aria-label="@(IsPaused ? "Resume" : "Pause")"
+            aria-pressed="@(IsPaused ? "true" : "false")"
+            disabled="@(!Enabled)" @onclick="OnPauseToggle">
+        @if (IsPaused)
+        {
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>
+        }
+        else
+        {
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12" /></svg>
+        }
+    </button>
+
+    <button type="button" class="control" aria-label="Move right"
+            disabled="@(!Enabled)" @onclick="OnRight">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
+</div>
+
+@if (!Enabled && DisabledReason is not null)
+{
+    <p class="disabled-reason">@DisabledReason</p>
+}
+
+@code {
+    [Parameter] public bool Enabled { get; set; }
+    [Parameter] public bool IsPaused { get; set; }
+    [Parameter] public string? DisabledReason { get; set; }
+    [Parameter] public EventCallback OnLeft { get; set; }
+    [Parameter] public EventCallback OnPauseToggle { get; set; }
+    [Parameter] public EventCallback OnRight { get; set; }
+}

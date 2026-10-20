@@ -1,0 +1,43 @@
+@* A row in a grouped settings list. Shows a chevron only when it actually navigates (Href set). *@
+
+@if (Href is not null)
+{
+    <a class="setting-row" href="@Href">
+        @RowContent
+        <svg class="icon chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </a>
+}
+else
+{
+    <div class="setting-row">
+        @RowContent
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public RenderFragment? Icon { get; set; }
+
+    /// <summary>Where the row links to. Leave null for rows with nothing behind them yet.</summary>
+    [Parameter] public string? Href { get; set; }
+
+    private RenderFragment RowContent => @<text>
+        @if (Icon is not null)
+        {
+            <span class="setting-icon" aria-hidden="true">@Icon</span>
+        }
+        <span class="setting-text">
+            <span class="setting-title">@Title</span>
+            @if (Description is not null)
+            {
+                <span class="setting-desc">@Description</span>
+            }
+        </span>
+        @if (Value is not null)
+        {
+            <span class="setting-value">@Value</span>
+        }
+    </text>;
+}
