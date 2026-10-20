@@ -1,13 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    The game: rules (physics, level generation, scoring, streaks) and the KNI game class that draws them.
+    This references only the platform-neutral KNI packages; the browser backend
+    (nkast.Kni.Platform.Blazor.GL) is referenced by DailyDoodle.Web.
+  -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- KNI, the game framework DailyDoodleGame draws with. The version comes from Directory.Build.props. -->
+    <!-- The version comes from Directory.Build.props. -->
     <PackageReference Include="nkast.Xna.Framework" Version="$(KniVersion)" />
     <PackageReference Include="nkast.Xna.Framework.Content" Version="$(KniVersion)" />
     <PackageReference Include="nkast.Xna.Framework.Game" Version="$(KniVersion)" />
