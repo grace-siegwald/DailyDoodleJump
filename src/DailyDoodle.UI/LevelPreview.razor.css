@@ -1,0 +1,91 @@
+.level-preview {
+  /* Shrink width with height so the 5:7 box never letterboxes on short/wide screens. */
+  width: min(100%, calc(58vh * 5 / 7));
+  aspect-ratio: 5 / 7;
+  margin: 0 auto;
+  background: var(--color-surface, #FAFAFA);
+  border: 1px solid var(--color-border, #E5E5E5);
+  border-radius: var(--radius, 14px);
+  overflow: hidden;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.grid {
+  stroke: #EFEFEF;
+  stroke-width: 1;
+}
+
+.platform {
+  fill: #FFFFFF;
+  stroke: #D4D4D4;
+  stroke-width: 1.25;
+}
+
+.platform.moving {
+  stroke: var(--color-accent, #34A853);
+}
+
+.platform.breakable {
+  fill: transparent;
+  stroke: #B5B5B5;
+  stroke-dasharray: 5 4;
+}
+
+.move-track {
+  stroke: var(--color-accent-soft, #EAF6EC);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.spring {
+  fill: var(--color-accent, #34A853);
+}
+
+.player {
+  fill: var(--color-accent, #34A853);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-secondary, #777777);
+  font-size: 0.75rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.swatch {
+  width: 18px;
+  height: 7px;
+  border-radius: 4px;
+  background: #FFFFFF;
+  border: 1.25px solid #D4D4D4;
+}
+
+.swatch.moving {
+  border-color: var(--color-accent, #34A853);
+}
+
+.swatch.breakable {
+  border-style: dashed;
+  border-color: #B5B5B5;
+}
+
+.swatch.spring {
+  background: var(--color-accent, #34A853);
+  border-color: var(--color-accent, #34A853);
+}

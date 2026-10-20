@@ -2,54 +2,53 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DailyDoodleJump</title>
-    <base href="/" />
-    <link rel="preload" id="webassembly" />
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="DailyDoodle.Web.styles.css" rel="stylesheet" />
-    <script type="importmap"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <title>Daily Doodle Jump</title>
+  <base href="/" />
+  <link rel="preload" id="webassembly" />
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="DailyDoodle.Web.styles.css" />
+  <script type="importmap"></script>
 </head>
 
 <body>
-    <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
-    </div>
+  <div id="app">
+    <svg class="loading-progress">
+      <circle r="40%" cx="50%" cy="50%" />
+      <circle r="40%" cx="50%" cy="50%" />
+    </svg>
+    <div class="loading-progress-text"></div>
+  </div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="." class="reload">Reload</a>
-        <span class="dismiss">🗙</span>
-    </div>
+  <div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+  </div>
+  <!--
+    KNI's browser glue, from the nkast.Wasm.* packages that nkast.Kni.Platform.Blazor.GL pulls in.
+    The version in each file name (10.0.3) must match the nkast.Wasm.* version that KNI uses.
+    When you change KniVersion in Directory.Build.props, copy these lines from the same version of
+    KNI's Blazor template: Templates/dotnetTemplates/content/BlazorGL.NetCore.CSharp/wwwroot/index.html
+    in https://github.com/kniEngine/kni
+  -->
+  <script src="_content/nkast.Wasm.JSInterop/js/JSObject.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Dom/js/Window.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Dom/js/Document.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Dom/js/Navigator.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Dom/js/Gamepad.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Dom/js/Media.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.XHR/js/XHR.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Canvas/js/Canvas.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Canvas/js/CanvasGLContext.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.Audio/js/Audio.10.0.3.js"></script>
+  <script src="_content/nkast.Wasm.XR/js/XR.10.0.3.js"></script>
+  <script src="js/game-loop.js"></script>
 
-    <!--
-      KNI's browser glue, from the nkast.Wasm.* packages that nkast.Kni.Platform.Blazor.GL pulls in.
-      The version in each file name (10.0.3) must match the nkast.Wasm.* version that KNI uses.
-      When you change KniVersion in Directory.Build.props, copy these lines from the same version of
-      KNI's Blazor template: Templates/dotnetTemplates/content/BlazorGL.NetCore.CSharp/wwwroot/index.html
-      in https://github.com/kniEngine/kni
-    -->
-    <script src="_content/nkast.Wasm.JSInterop/js/JSObject.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Dom/js/Window.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Dom/js/Document.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Dom/js/Navigator.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Dom/js/Gamepad.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Dom/js/Media.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.XHR/js/XHR.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Canvas/js/Canvas.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Canvas/js/CanvasGLContext.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.Audio/js/Audio.10.0.3.js"></script>
-    <script src="_content/nkast.Wasm.XR/js/XR.10.0.3.js"></script>
-    <script src="js/game-loop.js"></script>
-
-    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+  <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 
 </html>

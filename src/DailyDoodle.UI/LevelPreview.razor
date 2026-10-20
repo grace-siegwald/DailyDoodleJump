@@ -1,0 +1,103 @@
+@* Draws the first screen of a seeded level from the real LevelGenerator.
+   SVG + viewBox keeps the aspect ratio fixed at any size, so nothing stretches. *@
+
+<div class="level-preview">
+    <svg viewBox="0 0 @F(width) @F(ViewHeight)" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="@AriaLabel">
+        @for (var y = GridSpacing; y < ViewHeight; y += GridSpacing)
+        {
+            <line class="grid" x1="0" x2="@F(width)" y1="@F(y)" y2="@F(y)" />
+        }
+
+        @foreach (var p in visible)
+        {
+            var top = ToScreenY(p.Y);
+            if (p.Type == PlatformType.Moving)
+            {
+                <line class="move-track"
+                      x1="@F(p.X - p.MoveRange + PlatformHeight / 2)" x2="@F(p.X + p.Width + p.MoveRange - PlatformHeight / 2)"
+                      y1="@F(top + PlatformHeight / 2)" y2="@F(top + PlatformHeight / 2)" />
+            }
+            <rect class="platform @TypeClass(p.Type)"
+                  x="@F(p.X)" y="@F(top)" width="@F(p.Width)" height="@F(PlatformHeight)"
+                  rx="@F(PlatformHeight / 2)" />
+            if (p.Type == PlatformType.Spring)
+            {
+                <rect class="spring" x="@F(p.X + p.Width / 2 - 7)" y="@F(top - 8)" width="14" height="8" rx="2" />
+            }
+        }
+
+        <polygon class="player" points="@StarPoints(startCenterX, ToScreenY(0) - 20, 16, 7)" />
+    </svg>
+</div>
+
+<ul class="legend" aria-hidden="true">
+    <li><span class="swatch normal"></span>Normal</li>
+    <li><span class="swatch moving"></span>Moving</li>
+    <li><span class="swatch breakable"></span>Breakable</li>
+    <li><span class="swatch spring"></span>Spring</li>
+</ul>
+
+@code {
+    private const double PlatformHeight = 14;
+    private const double BottomMargin = 56;
+    private const double GridSpacing = 56;
+    private const double TopMargin = 12;
+
+    /// <summary>Seed for the level to draw (e.g. DailySeed.ForToday()).</summary>
+    [Parameter, EditorRequired] public ulong Seed { get; set; }
+
+    /// <summary>World height shown, in the same units as LevelSettings.WorldWidth.</summary>
+    [Parameter] public double ViewHeight { get; set; } = 560;
+
+    [Parameter] public string AriaLabel { get; set; } = "Preview of the level";
+
+    private ulong? renderedSeed;
+    private double width;
+    private double startCenterX;
+    private List<Platform> visible = [];
+
+    protected override void OnParametersSet()
+    {
+        if (renderedSeed == Seed)
+        {
+            return;
+        }
+
+        var generator = new LevelGenerator(Seed);
+        var top = ViewHeight - BottomMargin;
+        generator.EnsureGeneratedUpTo(top);
+
+        width = generator.Settings.WorldWidth;
+        var start = generator.Platforms[0];
+        startCenterX = start.X + start.Width / 2;
+        visible = generator.Platforms.Where(p => ToScreenY(p.Y) >= TopMargin).ToList();
+        renderedSeed = Seed;
+    }
+
+    // World Y grows upward; SVG Y grows downward.
+    private double ToScreenY(double worldY) => ViewHeight - BottomMargin - worldY;
+
+    private static string TypeClass(PlatformType type) => type switch
+    {
+        PlatformType.Moving => "moving",
+        PlatformType.Breakable => "breakable",
+        PlatformType.Spring => "spring-base",
+        _ => "normal",
+    };
+
+    // Invariant culture so decimals are always "1.5", never "1,5" (which breaks SVG).
+    private static string F(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+
+    private static string StarPoints(double cx, double cy, double outer, double inner)
+    {
+        var points = new string[10];
+        for (var i = 0; i < 10; i++)
+        {
+            var radius = i % 2 == 0 ? outer : inner;
+            var angle = -Math.PI / 2 + i * Math.PI / 5;
+            points[i] = $"{F(cx + radius * Math.Cos(angle))},{F(cy + radius * Math.Sin(angle))}";
+        }
+        return string.Join(' ', points);
+    }
+}

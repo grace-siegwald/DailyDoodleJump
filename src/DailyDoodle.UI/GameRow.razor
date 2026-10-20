@@ -1,0 +1,35 @@
+@* One game in the Library list. The whole row is a button. *@
+
+<button type="button" class="game-row @(IsCurrent ? "current" : null)"
+        aria-current="@(IsCurrent ? "true" : null)" @onclick="OnSelect">
+    <span class="thumb" aria-hidden="true">
+        @if (Icon is not null)
+        {
+            @Icon
+        }
+        else
+        {
+            <span class="initial">@Game.Title[..1]</span>
+        }
+    </span>
+
+    <span class="text">
+        <span class="title-line">
+            <span class="title">@Game.Title</span>
+            @if (IsCurrent)
+            {
+                <span class="badge">Now Playing</span>
+            }
+        </span>
+        <span class="desc">@Game.Description</span>
+    </span>
+
+    <svg class="icon chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+</button>
+
+@code {
+    [Parameter, EditorRequired] public GameInfo Game { get; set; } = default!;
+    [Parameter] public bool IsCurrent { get; set; }
+    [Parameter] public RenderFragment? Icon { get; set; }
+    [Parameter] public EventCallback OnSelect { get; set; }
+}

@@ -1,0 +1,61 @@
+.game-card {
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem 0.875rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-end {
+  align-items: flex-end;
+}
+
+.stat-label {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The game window. Shrinks with height so the play area's 400x640 shape
+   never letterboxes on short or wide screens. */
+.game-window {
+  width: min(100%, calc(58vh * 400 / 640));
+  aspect-ratio: 400 / 640;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* ::deep, because game-loop.js adds the canvas, so it has no scoped style attribute. */
+.game-window ::deep canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.caption {
+  margin-top: 0.5rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+}

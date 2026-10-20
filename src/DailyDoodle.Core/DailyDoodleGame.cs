@@ -36,7 +36,7 @@ public class DailyDoodleGame : Game
     private static readonly Color _paperColor = new(250, 246, 236);
     private static readonly Color _inkColor = new(60, 60, 60);
 
-    // Must exist for the game to get a graphics device, even though nothing reads it yet.
+    // Keeps the back buffer the same size as the canvas on the page (see UpdateScreenFit).
     private readonly GraphicsDeviceManager _graphics;
 
     private SpriteBatch _spriteBatch = null!;
@@ -167,6 +167,17 @@ public class DailyDoodleGame : Game
 
     private void UpdateScreenFit()
     {
+        // The page sizes the canvas (wwwroot/js/game-loop.js), so the back buffer follows it.
+        // Without this the back buffer keeps whatever size KNI last set from the browser window.
+        var canvas = Window.ClientBounds;
+        if (canvas.Width > 0 && canvas.Height > 0 &&
+            (_graphics.PreferredBackBufferWidth != canvas.Width || _graphics.PreferredBackBufferHeight != canvas.Height))
+        {
+            _graphics.PreferredBackBufferWidth = canvas.Width;
+            _graphics.PreferredBackBufferHeight = canvas.Height;
+            _graphics.ApplyChanges();
+        }
+
         var backBuffer = GraphicsDevice.PresentationParameters;
         _scale = MathF.Min(
             backBuffer.BackBufferWidth / (float)VirtualWidth,
