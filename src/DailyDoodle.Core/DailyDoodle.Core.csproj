@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- KNI, the game framework DailyDoodleGame draws with. The version comes from Directory.Build.props. -->
+    <PackageReference Include="nkast.Xna.Framework" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Content" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Game" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Graphics" Version="$(KniVersion)" />
+    <PackageReference Include="nkast.Xna.Framework.Input" Version="$(KniVersion)" />
+  </ItemGroup>
+
 </Project>

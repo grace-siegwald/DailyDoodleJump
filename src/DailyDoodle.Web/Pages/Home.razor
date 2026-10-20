@@ -1,5 +1,8 @@
 @page "/"
+@implements IAsyncDisposable
+@using DailyDoodle.Core
 @inject GameSession Session
+@inject IJSRuntime JS
 
 <PageTitle>@Session.CurrentGame.Title</PageTitle>
 
@@ -17,23 +20,65 @@
         </div>
     </div>
 
-    <LevelPreview Seed="todaySeed" AriaLabel="@($"Preview of today's level, {todayText}")" />
+    @*
+        The game's window. wwwroot/js/game-loop.js puts the canvas KNI draws into in here,
+        in the shape of the 400x640 play area, and keeps that canvas when you leave the page.
+    *@
+    <div id="canvasHolder" class="game-window" role="img"
+         aria-label="@($"Today's level, {todayText}")"></div>
 
     <p class="caption">Today's level &middot; @todayText</p>
 </section>
 
 <GameControls Enabled="false"
-              DisabledReason="Controls turn on once gameplay is built." />
+              DisabledReason="Controls turn on once gameplay is built. For now: arrow keys or A and D." />
 
 @code {
     // UTC date, matching DailySeed.ForToday(), so the label and the level always agree.
     private readonly DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
-    private ulong todaySeed;
     private string todayText = "";
+
+    // KNI can only start one game per page load, so the game outlives this page:
+    // leaving Home stops the frame loop, coming back starts it again.
+    private static DailyDoodleGame? _game;
+
+    private DotNetObjectReference<Home>? _self;
 
     protected override void OnInitialized()
     {
-        todaySeed = DailySeed.ForDate(today);
         todayText = today.ToString("MMMM d, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        // The holder exists only after the first render. Start the browser's frame loop (wwwroot/js/game-loop.js).
+        _self = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("initRenderJS", _self, DailyDoodleGame.VirtualWidth, DailyDoodleGame.VirtualHeight);
+    }
+
+    // Called by game-loop.js once per browser frame.
+    [JSInvokable]
+    public void TickDotNet()
+    {
+        if (_game is null)
+        {
+            _game = new DailyDoodleGame();
+            _game.Run();
+        }
+
+        _game.Tick();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Leaving the page takes the canvas off the page, so stop the frame loop.
+        // The game itself is kept, with its WebGL context, for when you come back.
+        await JS.InvokeVoidAsync("stopRenderJS");
+        _self?.Dispose();
     }
 }

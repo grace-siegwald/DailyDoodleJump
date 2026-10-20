@@ -33,6 +33,26 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The game window. Shrinks with height so the play area's 400x640 shape
+   never letterboxes on short or wide screens. */
+.game-window {
+  width: min(100%, calc(58vh * 400 / 640));
+  aspect-ratio: 400 / 640;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* ::deep, because game-loop.js adds the canvas, so it has no scoped style attribute. */
+.game-window ::deep canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
 .caption {
   margin-top: 0.5rem;
   text-align: center;
