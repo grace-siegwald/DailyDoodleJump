@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
+using DailyDoodle.Core.LevelGeneration;
 
 namespace DailyDoodle.Core;
 
@@ -52,6 +53,9 @@ public class DailyDoodleGame : Game
     private Vector2 _boxPosition = new(180f, 300f);
     private float _boxVelocityY;
 
+    private LevelGenerator _levelGenerator = null!;
+    private DateOnly _currentLevelDate;
+
     public DailyDoodleGame()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -65,6 +69,9 @@ public class DailyDoodleGame : Game
     protected override void Initialize()
     {
         Window.Title = "Daily Doodle Jump";
+
+        StartNewGame();
+
         base.Initialize();
     }
 
@@ -200,5 +207,22 @@ public class DailyDoodleGame : Game
     {
         var scale = new Vector2(size.X / texture.Width, size.Y / texture.Height);
         _spriteBatch.Draw(texture, position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+    }
+
+    private void StartNewGame()
+    {
+        DateOnly today = DateOnly.FromDateTime( DateTime.UtcNow );
+
+        _currentLevelDate = today;
+
+        ulong seed = DailySeed.ForDate(today);
+
+        // Create a fresh generator, even when replaying
+        // the same day's level.
+        _levelGenerator = new LevelGenerator(seed);
+
+        _levelGenerator.EnsureGeneratedUpTo(2000);
+
+        // Later, reset the player, camera, and score here.
     }
 }
