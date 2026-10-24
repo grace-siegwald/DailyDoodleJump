@@ -76,7 +76,7 @@ public class DailyDoodleGame : Game
         _pixel = new Texture2D(GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
 
-        _playerTexture = LoadTexture("images/placeholders/player.png");
+        _playerTexture = LoadTexture("images/Player.png");
     }
 
     protected override void Update(GameTime gameTime)
