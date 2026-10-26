@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
+
 
 namespace DailyDoodle.Core;
 
 internal class Platform
 {
+    public Vector2 Position { get; set; }
 
-    public int PlatformWidth;
-    public int PlatformHeight;
+    public int Width { get; set; } = 80;
+    public int Height { get; set; } = 20;
 
-    //coordinates - can we use vectors again?
-    public int PlatformLocationX; 
-    public int PlatformLocationY; 
-
+    public Platform(Vector2 position)
+    {
+        Position = position;
+    }
     /*
      platforms can:
     bounce, break move

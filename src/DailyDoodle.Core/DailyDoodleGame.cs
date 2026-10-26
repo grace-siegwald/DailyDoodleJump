@@ -52,6 +52,10 @@ public class DailyDoodleGame : Game
     private Vector2 _boxPosition = new(180f, 300f);
     private float _boxVelocityY;
 
+    //fopr platforms
+    private Texture2D _platformTexture = null!;
+    private Platform _testPlatform = null!;
+
     public DailyDoodleGame()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -72,11 +76,17 @@ public class DailyDoodleGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // A 1x1 white texture, tinted and stretched to draw plain rectangles.
         _pixel = new Texture2D(GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
 
-        _playerTexture = LoadTexture("images/placeholders/player.png");
+        _playerTexture = LoadTexture("images/Player.png");
+        _platformTexture = LoadTexture("images/Platform_Normal.png");
+
+        _testPlatform = new Platform(
+            new Vector2(
+                VirtualWidth / 2f - 40,
+                VirtualHeight / 2f
+            ));
     }
 
     protected override void Update(GameTime gameTime)
@@ -123,6 +133,16 @@ public class DailyDoodleGame : Game
 
         FillRectangle(Vector2.Zero, new Vector2(VirtualWidth, VirtualHeight), _paperColor);
         FillRectangle(new Vector2(0f, FloorY), new Vector2(VirtualWidth, 4f), _inkColor);
+
+        //drawing platform
+        DrawSprite(
+    _platformTexture,
+    _testPlatform.Position,
+    new Vector2(
+        _testPlatform.Width,
+        _testPlatform.Height));
+
+
         DrawSprite(_playerTexture, _boxPosition, new Vector2(BoxSize, BoxSize));
 
         _spriteBatch.End();
