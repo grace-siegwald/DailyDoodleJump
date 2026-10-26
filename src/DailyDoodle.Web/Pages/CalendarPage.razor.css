@@ -39,3 +39,28 @@
 .play-button:hover {
   background: var(--color-accent-text);
 }
+
+.previous-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  border: none;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.previous-button:hover {
+  filter: brightness(0.96);
+}
+
+.month-card {
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+}

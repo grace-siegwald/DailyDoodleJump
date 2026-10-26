@@ -10,25 +10,51 @@
 <section class="card daily-card" aria-label="Daily game">
     <div class="daily-top">
         <span class="daily-title">Daily game</span>
-        <span class="daily-date">@today.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture)</span>
+        <span class="daily-date">@_today.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture)</span>
         <a class="play-button" href="">Play</a>
     </div>
 
-    <WeekStrip Today="today" CompletedDays="completedDays" OnDaySelected="PlayDay" />
+    <WeekStrip Today="_today" CompletedDays="_completedDays" OnDaySelected="PlayDay" />
+
+    <button type="button" class="previous-button" aria-expanded="@(_showMonth ? "true" : "false")"
+            @onclick="ToggleMonth">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M3 10h18M8 3v4M16 3v4" />
+        </svg>
+        @(_showMonth ? "Hide previous games" : "Previous games")
+    </button>
 </section>
 
-@code {
-    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
+@if (_showMonth)
+{
+    <section class="card month-card" aria-label="Previous games">
+        <MonthCalendar Today="_today" CompletedDays="_completedDays" OnDaySelected="PlayDay" />
+    </section>
+}
 
-    // Fake data until saving is built: pretend the last two days were finished.
-    private HashSet<DateOnly> completedDays = new();
+@code {
+
+    private readonly DateOnly _today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    private HashSet<DateOnly> _completedDays = new();
+
+    private bool _showMonth;
 
     protected override void OnInitialized()
     {
-        completedDays = new HashSet<DateOnly> { today.AddDays(-1), today.AddDays(-2) };
+        _completedDays = new HashSet<DateOnly>
+        {
+            _today.AddDays(-1), _today.AddDays(-2), _today.AddDays(-4),
+            _today.AddDays(-5), _today.AddDays(-6), _today.AddDays(-10),
+        };
     }
 
-    // the game for that day.
+    private void ToggleMonth()
+    {
+        _showMonth = !_showMonth;
+    }
+
     private void PlayDay(DateOnly day)
     {
         Navigation.NavigateTo($"?date={day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}");

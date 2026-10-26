@@ -1,0 +1,50 @@
+.month-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.month-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: none;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.arrow:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.arrow:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
