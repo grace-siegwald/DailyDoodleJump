@@ -1,0 +1,28 @@
+<div class="week-strip" role="group" aria-label="This week">
+    @foreach (var day in Days)
+    {
+        var isDone = CompletedDays.Contains(day);
+        var isToday = day == Today;
+        var isFuture = day > Today;
+
+        <button type="button" class="day @(isDone ? "done" : null) @(isToday ? "today" : null)" disabled="@isFuture"
+                aria-current="@(isToday ? "date" : null)" aria-label="@Describe(day, isDone)"
+                @onclick="() => OnDaySelected.InvokeAsync(day)">
+            <span class="day-name">@day.ToString("ddd", CultureInfo.InvariantCulture)</span>
+            <span class="day-number">@day.Day</span>
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public DateOnly Today { get; set; }
+    [Parameter] public IReadOnlySet<DateOnly> CompletedDays { get; set; } = new HashSet<DateOnly>();
+    [Parameter] public EventCallback<DateOnly> OnDaySelected { get; set; }
+
+    private DateOnly StartOfWeek => Today.AddDays(-(int)Today.DayOfWeek);
+
+    private IEnumerable<DateOnly> Days => Enumerable.Range(0, 7).Select(i => StartOfWeek.AddDays(i));
+
+    private static string Describe(DateOnly day, bool isDone) =>
+        day.ToString("dddd, MMMM d", CultureInfo.InvariantCulture) + (isDone ? ", finished" : "");
+}

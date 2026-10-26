@@ -1,0 +1,36 @@
+@page "/calendar"
+@using System.Globalization
+@inject NavigationManager Navigation
+
+<PageTitle>Calendar</PageTitle>
+
+<h1 class="page-title">Calendar</h1>
+<p class="subtitle">Play today's level, or go back to a day you missed.</p>
+
+<section class="card daily-card" aria-label="Daily game">
+    <div class="daily-top">
+        <span class="daily-title">Daily game</span>
+        <span class="daily-date">@today.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture)</span>
+        <a class="play-button" href="">Play</a>
+    </div>
+
+    <WeekStrip Today="today" CompletedDays="completedDays" OnDaySelected="PlayDay" />
+</section>
+
+@code {
+    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+    // Fake data until saving is built: pretend the last two days were finished.
+    private HashSet<DateOnly> completedDays = new();
+
+    protected override void OnInitialized()
+    {
+        completedDays = new HashSet<DateOnly> { today.AddDays(-1), today.AddDays(-2) };
+    }
+
+    // the game for that day.
+    private void PlayDay(DateOnly day)
+    {
+        Navigation.NavigateTo($"?date={day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}");
+    }
+}
