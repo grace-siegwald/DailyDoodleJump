@@ -54,8 +54,7 @@ public class DailyDoodleGame : Game
 
     //fopr platforms
     private Texture2D _platformTexture = null!;
-    private Platform _testPlatform = null!;
-
+    private List<Platform> _platforms = new();
     public DailyDoodleGame()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -82,11 +81,21 @@ public class DailyDoodleGame : Game
         _playerTexture = LoadTexture("images/Player.png");
         _platformTexture = LoadTexture("images/Platform_Normal.png");
 
-        _testPlatform = new Platform(
-            new Vector2(
-                VirtualWidth / 2f - 40,
-                VirtualHeight / 2f
-            ));
+        //for platforms
+        _platforms.Add(new Platform(
+     new Vector2(VirtualWidth / 2f - 40, VirtualHeight / 2f)));
+
+        _platforms.Add(new Platform(
+            new Vector2(50, 500)));
+
+        _platforms.Add(new Platform(
+            new Vector2(250, 400)));
+
+        _platforms.Add(new Platform(
+            new Vector2(100, 300)));
+
+        _platforms.Add(new Platform(
+            new Vector2(220, 200)));
     }
 
     protected override void Update(GameTime gameTime)
@@ -135,12 +144,15 @@ public class DailyDoodleGame : Game
         FillRectangle(new Vector2(0f, FloorY), new Vector2(VirtualWidth, 4f), _inkColor);
 
         //drawing platform
-        DrawSprite(
-    _platformTexture,
-    _testPlatform.Position,
-    new Vector2(
-        _testPlatform.Width,
-        _testPlatform.Height));
+        foreach (var platform in _platforms)
+        {
+            DrawSprite(
+                _platformTexture,
+                platform.Position,
+                new Vector2(
+                    platform.Width,
+                    platform.Height));
+        }
 
 
         DrawSprite(_playerTexture, _boxPosition, new Vector2(BoxSize, BoxSize));
