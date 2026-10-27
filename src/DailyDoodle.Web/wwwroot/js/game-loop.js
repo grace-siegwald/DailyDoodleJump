@@ -16,15 +16,18 @@
   let playWidth = 0;
   let playHeight = 0;
 
-  // Last measured size for the canvas, so tick() doesn't read the layout every frame.
+  // How many pixels the canvas should have, so tick() doesn't measure the holder every frame.
   let width = 0;
   let height = 0;
 
-  // The biggest play-area-shaped box that fits the holder. Keeping the canvas exactly
-  // that shape leaves the game no letterboxing to draw inside its own box; CSS then
-  // stretches those few leftover pixels to the holder's edges.
+  // The biggest play-area-shaped box that fits the holder, counted in the screen's real pixels.
+  // CSS sizes are in "CSS pixels", but most phones and all Retina Macs show 2 or 3 real pixels
+  // for each one (devicePixelRatio). A canvas with only one pixel per CSS pixel gets stretched
+  // by the browser and looks soft, so give it one pixel per real screen pixel.
+  // CSS keeps the canvas the same size on the page (100% of the holder); only its detail changes.
   function measureHolder() {
-    const scale = Math.min(holder.clientWidth / playWidth, holder.clientHeight / playHeight);
+    const pixelRatio = window.devicePixelRatio || 1;
+    const scale = Math.min(holder.clientWidth / playWidth, holder.clientHeight / playHeight) * pixelRatio;
     width = Math.round(playWidth * scale);
     height = Math.round(playHeight * scale);
   }
@@ -44,7 +47,12 @@
       return;
     }
     fitCanvasToHolder();
-    page.invokeMethod('TickDotNet');
+
+    // KNI reports touches in page coordinates, so tell the game where the canvas is on the page
+    // (in CSS pixels). Measured every frame because scrolling and resizing move it.
+    const rect = canvas.getBoundingClientRect();
+    page.invokeMethod('TickDotNet', rect.left, rect.top, rect.width);
+
     frameId = window.requestAnimationFrame(tick);
   }
 
@@ -70,6 +78,10 @@
     holderObserver = new ResizeObserver(measureHolder);
     holderObserver.observe(holder);
 
+    // Zooming the page, or dragging the window to a screen with a different pixel density,
+    // changes devicePixelRatio without resizing the holder. Both fire a window resize.
+    window.addEventListener('resize', measureHolder);
+
     frameId = window.requestAnimationFrame(tick);
   };
 
@@ -77,6 +89,7 @@
   window.stopRenderJS = () => {
     page = null;
     window.cancelAnimationFrame(frameId);
+    window.removeEventListener('resize', measureHolder);
 
     if (holderObserver !== null) {
       holderObserver.disconnect();

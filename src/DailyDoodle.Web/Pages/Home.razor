@@ -61,9 +61,9 @@
         await JS.InvokeVoidAsync("initRenderJS", _self, DailyDoodleGame.VirtualWidth, DailyDoodleGame.VirtualHeight);
     }
 
-    // Called by game-loop.js once per browser frame.
+    // Called by game-loop.js once per browser frame, with where the canvas is on the page (CSS pixels).
     [JSInvokable]
-    public void TickDotNet()
+    public void TickDotNet(float canvasLeft, float canvasTop, float canvasWidth)
     {
         if (_game is null)
         {
@@ -71,6 +71,7 @@
             _game.Run();
         }
 
+        _game.SetCanvasPlacement(canvasLeft, canvasTop, canvasWidth);
         _game.Tick();
     }
 
