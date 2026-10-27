@@ -32,19 +32,22 @@ public class DailyDoodleGame : Game
     private SpriteBatch _spriteBatch = null!;
     private Texture2D _pixel = null!;
 
-    private SpriteArt _playerArt;
-    private SpriteArt _platformArt;
-    private SpriteArt _springArt;
-    private SpriteArt _breakingArt;
-    private SpriteArt _movingArt;
-
-    // Drawn for any object that has no art yet (a new enemy, say): a plain white square.
-    private SpriteArt _missingArt;
+    private Texture2D _playerTexture = null!;
+    private Texture2D _platformTexture = null!;
+    private Texture2D _springTexture = null!;
+    private Texture2D _breakingTexture = null!;
+    private Texture2D _movingTexture = null!;
 
     // Where the 400x640 play area sits on the real screen. Recalculated every frame,
     // because the canvas resizes with the browser window.
     private float _scale = 1f;
     private Vector2 _offset;
+
+    // Where the canvas is on the web page, in CSS pixels. KNI reports touches in page coordinates,
+    // not canvas coordinates, so this is needed to tell which half of the game a finger is on.
+    // Updated every frame by the page (see SetCanvasPlacement).
+    private Vector2 _canvasTopLeft;
+    private float _canvasCssWidth;
 
     // The current run. Replaced by StartNewRun when the player restarts.
     private GameWorld _world = null!;
@@ -74,16 +77,31 @@ public class DailyDoodleGame : Game
         // A 1x1 white texture, tinted and stretched to draw plain rectangles.
         _pixel = new Texture2D(GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
-        _missingArt = new SpriteArt(_pixel, new Rectangle(0, 0, 1, 1));
 
-        // Each image is a 1920x1920 square with the drawing in the middle. The rectangle is the part
-        // with the drawing in it, so the drawing's top edge lines up with the object's top edge.
-        // If the art is re-exported, re-measure these (or crop the PNGs and use the whole image).
-        _playerArt = LoadArt("images/Player.png", new Rectangle(117, 159, 1682, 1655));
-        _platformArt = LoadArt("images/Platform_Normal.png", new Rectangle(69, 620, 1783, 590));
-        _springArt = LoadArt("images/Platform_Trampoline.png", new Rectangle(92, 633, 1736, 654));
-        _breakingArt = LoadArt("images/Platform_Breakable.png", new Rectangle(44, 704, 1827, 566));
-        _movingArt = LoadArt("images/Platform_Moveable.png", new Rectangle(132, 379, 1693, 1266));
+        // These images are cropped tight to the drawing and sized for the game (see art/README.md).
+        // Full-size originals would be drawn so much smaller than they are that most of their
+        // pixels get skipped, which breaks up the outlines.
+        _playerTexture = LoadTexture("images/Player.png");
+        _platformTexture = LoadTexture("images/Platform_Normal.png");
+        _springTexture = LoadTexture("images/Platform_Trampoline.png");
+        _breakingTexture = LoadTexture("images/Platform_Breakable.png");
+        _movingTexture = LoadTexture("images/Platform_Moveable.png");
+    }
+
+    /// <summary>
+    /// Tells the game where its canvas is on the web page, in CSS pixels.
+    /// The page (Home.razor) calls this every frame, before <see cref="Game.Tick"/>.
+    /// </summary>
+    public void SetCanvasPlacement(float left, float top, float width)
+    {
+        // Ignore nonsense (a canvas that isn't laid out yet has width 0) and keep the last good values.
+        if (!float.IsFinite(left) || !float.IsFinite(top) || !float.IsFinite(width) || width <= 0f)
+        {
+            return;
+        }
+
+        _canvasTopLeft = new Vector2(left, top);
+        _canvasCssWidth = width;
     }
 
     protected override void Update(GameTime gameTime)
@@ -121,11 +139,11 @@ public class DailyDoodleGame : Game
 
         foreach (var gameObject in _world.Objects)
         {
-            DrawArt(ArtFor(gameObject), gameObject);
+            DrawArt(TextureFor(gameObject), gameObject);
         }
 
         // Player last, so it's drawn in front of the platforms.
-        DrawArt(_playerArt, _world.Player);
+        DrawArt(_playerTexture, _world.Player);
 
         if (_world.IsGameOver)
         {
@@ -146,13 +164,14 @@ public class DailyDoodleGame : Game
     }
 
     // Subclasses must come before Platform, or the compiler reports them as unreachable.
-    private SpriteArt ArtFor(GameObject gameObject) => gameObject switch
+    // Anything without art yet (a new enemy, say) is drawn as a plain white square.
+    private Texture2D TextureFor(GameObject gameObject) => gameObject switch
     {
-        SpringPlatform => _springArt,
-        BreakingPlatform => _breakingArt,
-        MovingPlatform => _movingArt,
-        Platform => _platformArt,
-        _ => _missingArt,
+        SpringPlatform => _springTexture,
+        BreakingPlatform => _breakingTexture,
+        MovingPlatform => _movingTexture,
+        Platform => _platformTexture,
+        _ => _pixel,
     };
 
     /// <summary>
@@ -165,13 +184,17 @@ public class DailyDoodleGame : Game
         return Texture2D.FromStream(GraphicsDevice, stream);
     }
 
-    private SpriteArt LoadArt(string path, Rectangle drawingArea) => new(LoadTexture(path), drawingArea);
-
     private (bool Left, bool Right) ReadInput()
     {
         var keyboard = Keyboard.GetState();
         var left = keyboard.IsKeyDown(Keys.Left) || keyboard.IsKeyDown(Keys.A);
         var right = keyboard.IsKeyDown(Keys.Right) || keyboard.IsKeyDown(Keys.D);
+
+        // Until the page has said where the canvas is, there's no way to place a touch.
+        if (_canvasCssWidth <= 0f)
+        {
+            return (left, right);
+        }
 
         // On phones: holding the left or right half of the play area steers.
         foreach (var touch in TouchPanel.GetState())
@@ -235,8 +258,8 @@ public class DailyDoodleGame : Game
             (backBuffer.BackBufferHeight - (VirtualHeight * _scale)) / 2f);
     }
 
-    // Converts a point on the real screen (a touch, a click) into game units.
-    private Vector2 ToPlayArea(Vector2 screenPoint) => (screenPoint - _offset) / _scale;
+    // Converts a touch (web page coordinates, in CSS pixels) into game units.
+    private Vector2 ToPlayArea(Vector2 pagePoint) => (pagePoint - _canvasTopLeft) * (VirtualWidth / _canvasCssWidth);
 
     private void FillRectangle(Vector2 position, Vector2 size, Color color)
     {
@@ -245,14 +268,11 @@ public class DailyDoodleGame : Game
 
     // Draws an object's art as wide as the object, keeping the art's proportions, with the art's top
     // edge on the object's top edge. The camera is applied here: world Y minus the camera's Y.
-    private void DrawArt(SpriteArt art, GameObject gameObject)
+    private void DrawArt(Texture2D texture, GameObject gameObject)
     {
         var screenPosition = new Vector2(gameObject.Left, gameObject.Top - _world.CameraTop);
-        var scale = gameObject.Size.X / art.DrawingArea.Width;
+        var scale = gameObject.Size.X / texture.Width;
 
-        _spriteBatch.Draw(art.Texture, screenPosition, art.DrawingArea, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        _spriteBatch.Draw(texture, screenPosition, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
-
-    /// <summary>A texture and the part of it that has the drawing in it.</summary>
-    private readonly record struct SpriteArt(Texture2D Texture, Rectangle DrawingArea);
 }
