@@ -1,0 +1,22 @@
+<button type="button" class="day @(IsDone ? "done" : null) @(IsToday ? "today" : null)" disabled="@IsFuture"
+        aria-current="@(IsToday ? "date" : null)" aria-label="@Label" @onclick="() => OnSelected.InvokeAsync(Date)">
+    @if (ShowDayName)
+    {
+        <span class="day-name">@Date.ToString("ddd", CultureInfo.InvariantCulture)</span>
+    }
+    <span class="day-number">@Date.Day</span>
+</button>
+
+@code {
+    [Parameter, EditorRequired] public DateOnly Date { get; set; }
+    [Parameter] public bool IsDone { get; set; }
+    [Parameter] public bool IsToday { get; set; }
+    [Parameter] public bool IsFuture { get; set; }
+
+    [Parameter] public bool ShowDayName { get; set; }
+
+    [Parameter] public EventCallback<DateOnly> OnSelected { get; set; }
+
+    private string Label =>
+        Date.ToString("dddd, MMMM d", CultureInfo.InvariantCulture) + (IsDone ? ", finished" : "");
+}

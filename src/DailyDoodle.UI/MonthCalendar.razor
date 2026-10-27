@@ -1,0 +1,76 @@
+@* A full month, like a wall calendar. The arrows go back to earlier months. *@
+
+<div class="month-calendar">
+    <div class="month-header">
+        <button type="button" class="arrow" aria-label="Previous month" @onclick="ShowPreviousMonth">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" />
+            </svg>
+        </button>
+
+        <h2 class="month-title">@MonthTitle</h2>
+
+        <button type="button" class="arrow" aria-label="Next month" disabled="@IsCurrentMonth" @onclick="ShowNextMonth">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="month-grid" role="group" aria-label="@MonthTitle">
+        @foreach (var name in _dayNames)
+        {
+            <span class="weekday" aria-hidden="true">@name</span>
+        }
+
+        @for (var i = 0; i < LeadingBlanks; i++)
+        {
+            <span aria-hidden="true"></span>
+        }
+
+        @foreach (var day in DaysInMonth)
+        {
+            <CalendarDay Date="day" IsDone="@CompletedDays.Contains(day)" IsToday="@(day == Today)"
+                         IsFuture="@(day > Today)" OnSelected="OnDaySelected" />
+        }
+    </div>
+</div>
+
+@code {
+    private static readonly string[] _dayNames = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+    [Parameter, EditorRequired] public DateOnly Today { get; set; }
+    [Parameter] public IReadOnlySet<DateOnly> CompletedDays { get; set; } = new HashSet<DateOnly>();
+    [Parameter] public EventCallback<DateOnly> OnDaySelected { get; set; }
+
+    // The 1st of the month being shown. Starts on this month.
+    private DateOnly _shownMonth;
+
+    protected override void OnInitialized()
+    {
+        _shownMonth = new DateOnly(Today.Year, Today.Month, 1);
+    }
+
+    private string MonthTitle => _shownMonth.ToString("MMMM yyyy", CultureInfo.InvariantCulture);
+
+    private bool IsCurrentMonth => _shownMonth.Year == Today.Year && _shownMonth.Month == Today.Month;
+
+    private int LeadingBlanks => (int)_shownMonth.DayOfWeek;
+
+    private IEnumerable<DateOnly> DaysInMonth =>
+        Enumerable.Range(0, DateTime.DaysInMonth(_shownMonth.Year, _shownMonth.Month))
+            .Select(i => _shownMonth.AddDays(i));
+
+    private void ShowPreviousMonth()
+    {
+        _shownMonth = _shownMonth.AddMonths(-1);
+    }
+
+    private void ShowNextMonth()
+    {
+        if (!IsCurrentMonth)
+        {
+            _shownMonth = _shownMonth.AddMonths(1);
+        }
+    }
+}
