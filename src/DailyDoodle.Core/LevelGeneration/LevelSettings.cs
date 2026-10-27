@@ -7,10 +7,12 @@ namespace DailyDoodle.Core.LevelGeneration;
 /// </summary>
 public sealed record LevelSettings
 {
-    public double WorldWidth { get; init; } = 400;
-    public double Gravity { get; init; } = 1500;          // px/s^2
-    public double JumpVelocity { get; init; } = 800;      // px/s, upward speed right after a bounce
-    public double HorizontalSpeed { get; init; } = 300;   // px/s, player's max sideways speed
+    // These defaults come straight from the game's own classes, so changing the player's
+    // physics automatically keeps every generated gap jumpable.
+    public double WorldWidth { get; init; } = GameWorld.Width;
+    public double Gravity { get; init; } = Player.Gravity;              // px/s^2
+    public double JumpVelocity { get; init; } = Player.JumpSpeed;       // px/s, upward speed right after a bounce
+    public double HorizontalSpeed { get; init; } = Player.MoveSpeed;    // px/s, player's max sideways speed
     public bool HorizontalWrap { get; init; } = true;     // Doodle Jump style: exit left, appear right
 
     public double PlatformWidth { get; init; } = 60;

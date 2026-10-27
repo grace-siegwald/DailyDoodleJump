@@ -11,10 +11,17 @@ namespace DailyDoodle.Core;
 /// </remarks>
 public class Platform : GameObject
 {
-    public static readonly Vector2 DefaultSize = new(60f, 12f);
+    public const float DefaultWidth = 60f;
 
-    public Platform(Vector2 position)
-        : base(position, DefaultSize)
+    /// <summary>Height of every platform's landing box. The art can be drawn taller than this.</summary>
+    public const float Thickness = 12f;
+
+    public static readonly Vector2 DefaultSize = new(DefaultWidth, Thickness);
+
+    /// <param name="position">Top-left corner.</param>
+    /// <param name="width">How wide it is. The level generator makes platforms narrower as the climb gets harder.</param>
+    public Platform(Vector2 position, float width = DefaultWidth)
+        : base(position, new Vector2(width, Thickness))
     {
     }
 
@@ -26,7 +33,7 @@ public class Platform : GameObject
 }
 
 /// <summary>A platform with a spring: launches the player much higher than normal.</summary>
-public class SpringPlatform(Vector2 position) : Platform(position)
+public class SpringPlatform(Vector2 position, float width = Platform.DefaultWidth) : Platform(position, width)
 {
     /// <summary>Reaches about 625 units high, nearly a full screen.</summary>
     public const float SpringJumpSpeed = 1500f;
@@ -38,7 +45,7 @@ public class SpringPlatform(Vector2 position) : Platform(position)
 }
 
 /// <summary>A platform that breaks when landed on. The player doesn't bounce and keeps falling.</summary>
-public class BreakingPlatform(Vector2 position) : Platform(position)
+public class BreakingPlatform(Vector2 position, float width = Platform.DefaultWidth) : Platform(position, width)
 {
     public override void OnLanded(Player player)
     {
@@ -59,8 +66,9 @@ public class MovingPlatform : Platform
     /// <param name="minX">Leftmost X the platform's left edge can reach.</param>
     /// <param name="maxX">Rightmost X the platform's right edge can reach.</param>
     /// <param name="speed">Units per second. Must be greater than zero.</param>
-    public MovingPlatform(Vector2 position, float minX, float maxX, float speed = DefaultSpeed)
-        : base(position)
+    /// <param name="width">How wide it is.</param>
+    public MovingPlatform(Vector2 position, float minX, float maxX, float speed = DefaultSpeed, float width = DefaultWidth)
+        : base(position, width)
     {
         if (!(maxX - minX >= Size.X))
         {
