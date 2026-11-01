@@ -1,0 +1,22 @@
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.game-icon {
+  width: 64px;
+  height: 64px;
+  fill: #FFFFFF;
+}
+
+.game-icon .arrow {
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
