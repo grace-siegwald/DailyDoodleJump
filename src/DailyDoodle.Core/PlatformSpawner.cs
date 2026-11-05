@@ -69,6 +69,10 @@ public sealed class PlatformSpawner
             if (generated.Id >= _nextIdToSpawn)
             {
                 world.Add(ToGameObject(generated));
+                if (generated.Id > 10 && generated.Id % 8 == 0)
+                {
+                    SpawnEnemy(world, generated);
+                }
                 nextId = Math.Max(nextId, generated.Id + 1);
             }
         }
@@ -101,5 +105,33 @@ public sealed class PlatformSpawner
                 width: width),
             _ => new Platform(position, width),
         };
+    }
+
+    //for enemies
+    private static void SpawnEnemy(
+    GameWorld world,
+    GeneratedPlatform platform)
+    {
+        var position = new Vector2(
+            (float)platform.X +
+            ((float)platform.Width / 2f) -
+            (Enemy.DefaultWidth / 2f),
+
+            ToWorldY(platform.Y) - 60f);
+
+        EnemyType type =
+            platform.Id switch
+            {
+                < 30 => EnemyType.Slow,
+                < 60 => EnemyType.Medium,
+                _ => EnemyType.Fast
+            };
+
+        world.Add(
+            new Enemy(
+                position,
+                type,
+                0f,
+                GameWorld.Width));
     }
 }
