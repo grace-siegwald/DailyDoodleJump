@@ -69,9 +69,14 @@ public sealed class PlatformSpawner
             if (generated.Id >= _nextIdToSpawn)
             {
                 world.Add(ToGameObject(generated));
-                if (generated.Id > 10 && generated.Id % 8 == 0)
+                if (generated.Id > 40)
                 {
-                    SpawnEnemy(world, generated);
+                    Random random = new(generated.Id);
+
+                    if (random.NextDouble() < 0.08)
+                    {
+                        SpawnEnemy(world, generated);
+                    }
                 }
                 nextId = Math.Max(nextId, generated.Id + 1);
             }

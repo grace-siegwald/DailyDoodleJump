@@ -187,26 +187,7 @@ public class DailyDoodleGame : Game
         _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForToday()));
         _world = new GameWorld(new Player(_spawner.PlayerStart), []);
         _spawner.SpawnAhead(_world);
-        _world.Add(
-    new Enemy(
-        new System.Numerics.Vector2(100f, 400f),
-        EnemyType.Slow,
-        0f,
-        GameWorld.Width));
-
-        _world.Add(
-            new Enemy(
-                new System.Numerics.Vector2(200f, 250f),
-                EnemyType.Medium,
-                0f,
-                GameWorld.Width));
-
-        _world.Add(
-            new Enemy(
-                new System.Numerics.Vector2(150f, 100f),
-                EnemyType.Fast,
-                0f,
-                GameWorld.Width));
+    
     }
 
     // Subclasses must come before Platform, or the compiler reports them as unreachable.
