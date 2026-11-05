@@ -37,6 +37,8 @@ public class DailyDoodleGame : Game
     private Texture2D _springTexture = null!;
     private Texture2D _breakingTexture = null!;
     private Texture2D _movingTexture = null!;
+    //for end screen
+    private Texture2D _gameOverTexture = null!;
 
     // Where the 400x640 play area sits on the real screen. Recalculated every frame,
     // because the canvas resizes with the browser window.
@@ -86,6 +88,7 @@ public class DailyDoodleGame : Game
         _springTexture = LoadTexture("images/Platform_Trampoline.png");
         _breakingTexture = LoadTexture("images/Platform_Breakable.png");
         _movingTexture = LoadTexture("images/Platform_Moveable.png");
+        _gameOverTexture = LoadTexture("images/GameOver.png");
     }
 
     /// <summary>
@@ -147,7 +150,15 @@ public class DailyDoodleGame : Game
 
         if (_world.IsGameOver)
         {
-            FillRectangle(Vector2.Zero, new Vector2(VirtualWidth, VirtualHeight), _gameOverShade);
+            FillRectangle(
+                Vector2.Zero,
+                new Vector2(VirtualWidth, VirtualHeight),
+                _gameOverShade);
+
+            _spriteBatch.Draw(
+                _gameOverTexture,
+                new Vector2(50, 200),
+                Color.White);
         }
 
         _spriteBatch.End();
