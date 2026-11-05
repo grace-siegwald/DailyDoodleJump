@@ -40,6 +40,11 @@ public class DailyDoodleGame : Game
     //for end screen
     private Texture2D _gameOverTexture = null!;
 
+    //for enemies
+    private Texture2D _enemySlowTexture = null!;
+    private Texture2D _enemyMediumTexture = null!;
+    private Texture2D _enemyFastTexture = null!;
+
     // Where the 400x640 play area sits on the real screen. Recalculated every frame,
     // because the canvas resizes with the browser window.
     private float _scale = 1f;
@@ -89,6 +94,16 @@ public class DailyDoodleGame : Game
         _breakingTexture = LoadTexture("images/Platform_Breakable.png");
         _movingTexture = LoadTexture("images/Platform_Moveable.png");
         _gameOverTexture = LoadTexture("images/GameOver.png");
+
+        //for enemies
+        _enemySlowTexture =
+    LoadTexture("images/Enemy_1.png");
+
+        _enemyMediumTexture =
+            LoadTexture("images/Enemy_2.png");
+
+        _enemyFastTexture =
+            LoadTexture("images/Enemy_3.png");
     }
 
     /// <summary>
@@ -172,16 +187,46 @@ public class DailyDoodleGame : Game
         _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForToday()));
         _world = new GameWorld(new Player(_spawner.PlayerStart), []);
         _spawner.SpawnAhead(_world);
+        _world.Add(
+    new Enemy(
+        new System.Numerics.Vector2(100f, 400f),
+        EnemyType.Slow,
+        0f,
+        GameWorld.Width));
+
+        _world.Add(
+            new Enemy(
+                new System.Numerics.Vector2(200f, 250f),
+                EnemyType.Medium,
+                0f,
+                GameWorld.Width));
+
+        _world.Add(
+            new Enemy(
+                new System.Numerics.Vector2(150f, 100f),
+                EnemyType.Fast,
+                0f,
+                GameWorld.Width));
     }
 
     // Subclasses must come before Platform, or the compiler reports them as unreachable.
     // Anything without art yet (a new enemy, say) is drawn as a plain white square.
     private Texture2D TextureFor(GameObject gameObject) => gameObject switch
     {
+        Enemy enemy when enemy.EnemyType == EnemyType.Slow
+            => _enemySlowTexture,
+
+        Enemy enemy when enemy.EnemyType == EnemyType.Medium
+            => _enemyMediumTexture,
+
+        Enemy enemy when enemy.EnemyType == EnemyType.Fast
+            => _enemyFastTexture,
+
         SpringPlatform => _springTexture,
         BreakingPlatform => _breakingTexture,
         MovingPlatform => _movingTexture,
         Platform => _platformTexture,
+
         _ => _pixel,
     };
 
