@@ -1,0 +1,43 @@
+@page "/library"
+@inject NavigationManager Navigation
+@inject GameSession Session
+
+<PageTitle>Game Library</PageTitle>
+
+<h1 class="page-title">Game Library</h1>
+<p class="subtitle">@CountText</p>
+
+<ul class="game-list">
+    @foreach (var game in GameCatalog.All)
+    {
+        <li>
+            <GameRow Game="game"
+                     IsCurrent="game.Id == Session.CurrentGame.Id"
+                     OnSelect="() => Open(game)">
+                <Icon>
+                    @if (game.Id == GameCatalog.DailyDoodleJumpId)
+                    {
+                        <svg class="game-icon" viewBox="0 0 64 64">
+                            <rect x="12" y="44" width="22" height="6" rx="3" />
+                            <rect x="32" y="28" width="20" height="6" rx="3" />
+                            <rect x="14" y="13" width="18" height="6" rx="3" />
+                            <path class="arrow" d="M44 20V8m-5 5 5-5 5 5" />
+                        </svg>
+                    }
+                </Icon>
+            </GameRow>
+        </li>
+    }
+</ul>
+
+@code {
+    private static string CountText => GameCatalog.All.Count == 1
+        ? "1 game"
+        : $"{GameCatalog.All.Count} games";
+
+    private void Open(GameInfo game)
+    {
+        Session.Select(game.Id);
+        Navigation.NavigateTo(game.Route);
+    }
+}

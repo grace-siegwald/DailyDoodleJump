@@ -1,0 +1,53 @@
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+}
+
+.avatar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  flex: none;
+  border-radius: 50%;
+  background: #E9E9E9;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 0 0 1px var(--color-border);
+  overflow: hidden;
+}
+
+.avatar svg {
+  width: 72px;
+  height: 72px;
+  fill: #B5B5B5;
+}
+
+.name {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.handle {
+  color: var(--color-text-secondary);
+}
+
+.group {
+  overflow: hidden;
+}
+
+/* Inset separators, iOS style (the line starts after the icon). */
+.group ::deep .setting-row + .setting-row {
+  position: relative;
+}
+
+.group ::deep .setting-row + .setting-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 56px;
+  right: 0;
+  border-top: 1px solid var(--color-border);
+}
