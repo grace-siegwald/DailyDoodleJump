@@ -119,6 +119,8 @@ public class GameWorld
             }
         }
 
+        CheckEnemyCollisions();
+
         // A rising player can never land, so skip the platform checks while going up.
         if (Player.IsFalling)
         {
@@ -179,4 +181,18 @@ public class GameWorld
             CameraTop = Player.Top - CameraFollowLine;
         }
     }
+
+    //for enemies 
+    private void CheckEnemyCollisions()
+    {
+        foreach (var enemy in _objects.OfType<Enemy>())
+        {
+            if (Player.Overlaps(enemy))
+            {
+                IsGameOver = true;
+                return;
+            }
+        }
+    }
+
 }

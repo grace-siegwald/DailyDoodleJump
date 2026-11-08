@@ -37,6 +37,13 @@ public class DailyDoodleGame : Game
     private Texture2D _springTexture = null!;
     private Texture2D _breakingTexture = null!;
     private Texture2D _movingTexture = null!;
+    //for end screen
+    private Texture2D _gameOverTexture = null!;
+
+    //for enemies
+    private Texture2D _enemySlowTexture = null!;
+    private Texture2D _enemyMediumTexture = null!;
+    private Texture2D _enemyFastTexture = null!;
 
     // Where the 400x640 play area sits on the real screen. Recalculated every frame,
     // because the canvas resizes with the browser window.
@@ -86,6 +93,17 @@ public class DailyDoodleGame : Game
         _springTexture = LoadTexture("images/Platform_Trampoline.png");
         _breakingTexture = LoadTexture("images/Platform_Breakable.png");
         _movingTexture = LoadTexture("images/Platform_Moveable.png");
+        _gameOverTexture = LoadTexture("images/GameOver.png");
+
+        //for enemies
+        _enemySlowTexture =
+    LoadTexture("images/Enemy_1.png");
+
+        _enemyMediumTexture =
+            LoadTexture("images/Enemy_2.png");
+
+        _enemyFastTexture =
+            LoadTexture("images/Enemy_3.png");
     }
 
     /// <summary>
@@ -147,7 +165,15 @@ public class DailyDoodleGame : Game
 
         if (_world.IsGameOver)
         {
-            FillRectangle(Vector2.Zero, new Vector2(VirtualWidth, VirtualHeight), _gameOverShade);
+            FillRectangle(
+                Vector2.Zero,
+                new Vector2(VirtualWidth, VirtualHeight),
+                _gameOverShade);
+
+            _spriteBatch.Draw(
+                _gameOverTexture,
+                new Vector2(50, 200),
+                Color.White);
         }
 
         _spriteBatch.End();
@@ -161,16 +187,27 @@ public class DailyDoodleGame : Game
         _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForToday()));
         _world = new GameWorld(new Player(_spawner.PlayerStart), []);
         _spawner.SpawnAhead(_world);
+    
     }
 
     // Subclasses must come before Platform, or the compiler reports them as unreachable.
     // Anything without art yet (a new enemy, say) is drawn as a plain white square.
     private Texture2D TextureFor(GameObject gameObject) => gameObject switch
     {
+        Enemy enemy when enemy.EnemyType == EnemyType.Slow
+            => _enemySlowTexture,
+
+        Enemy enemy when enemy.EnemyType == EnemyType.Medium
+            => _enemyMediumTexture,
+
+        Enemy enemy when enemy.EnemyType == EnemyType.Fast
+            => _enemyFastTexture,
+
         SpringPlatform => _springTexture,
         BreakingPlatform => _breakingTexture,
         MovingPlatform => _movingTexture,
         Platform => _platformTexture,
+
         _ => _pixel,
     };
 
