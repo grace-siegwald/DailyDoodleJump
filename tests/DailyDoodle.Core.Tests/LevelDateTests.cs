@@ -7,7 +7,7 @@ public class LevelDateTests
     private static readonly DateOnly Today = new(2026, 11, 9);
 
     [Theory]
-    [InlineData(null)]
+    [InlineData((string?)null)]
     [InlineData("")]
     [InlineData("   ")]
     public void Choose_WithNoDate_PlaysToday(string? text)

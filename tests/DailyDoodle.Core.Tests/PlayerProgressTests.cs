@@ -118,7 +118,7 @@ public class PlayerProgressTests
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData((string?)null)]
     [InlineData("")]
     [InlineData("not json")]
     [InlineData("{\"days\": 5}")]
