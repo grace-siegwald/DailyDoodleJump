@@ -4,16 +4,16 @@ namespace DailyDoodle.Core.Tests;
 
 public class PlayerProgressTests
 {
-    private static readonly DateOnly Today = new(2026, 11, 9);
+    private static readonly DateOnly _today = new(2026, 11, 9);
 
     [Fact]
     public void ADayNeverPlayed_HasNoRecord()
     {
         var progress = new PlayerProgress();
 
-        Assert.Equal(DayRecord.None, progress[Today]);
+        Assert.Equal(DayRecord.None, progress[_today]);
         Assert.Empty(progress.FinishedDays);
-        Assert.Equal(0, progress.CurrentStreak(Today));
+        Assert.Equal(0, progress.CurrentStreak(_today));
     }
 
     [Fact]
@@ -21,11 +21,11 @@ public class PlayerProgressTests
     {
         var progress = new PlayerProgress();
 
-        Assert.True(progress.RecordRun(Today, 500f, finished: false, Today));
-        Assert.False(progress.RecordRun(Today, 300f, finished: false, Today));
-        Assert.True(progress.RecordRun(Today, 800f, finished: false, Today));
+        Assert.True(progress.RecordRun(_today, 500f, finished: false, _today));
+        Assert.False(progress.RecordRun(_today, 300f, finished: false, _today));
+        Assert.True(progress.RecordRun(_today, 800f, finished: false, _today));
 
-        Assert.Equal(800f, progress[Today].BestHeight);
+        Assert.Equal(800f, progress[_today].BestHeight);
     }
 
     [Fact]
@@ -33,57 +33,57 @@ public class PlayerProgressTests
     {
         var progress = new PlayerProgress();
 
-        progress.RecordRun(Today, 10_000f, finished: true, Today);
-        progress.RecordRun(Today, 200f, finished: false, Today);
+        progress.RecordRun(_today, 10_000f, finished: true, _today);
+        progress.RecordRun(_today, 200f, finished: false, _today);
 
-        Assert.True(progress[Today].Finished);
-        Assert.Contains(Today, progress.FinishedDays);
+        Assert.True(progress[_today].Finished);
+        Assert.Contains(_today, progress.FinishedDays);
     }
 
     [Fact]
     public void FinishingAPastLevelLater_MarksTheDayButNotTheStreak()
     {
         var progress = new PlayerProgress();
-        var lastWeek = Today.AddDays(-7);
+        var lastWeek = _today.AddDays(-7);
 
-        progress.RecordRun(lastWeek, 10_000f, finished: true, Today);
+        progress.RecordRun(lastWeek, 10_000f, finished: true, _today);
 
         Assert.True(progress[lastWeek].Finished);
         Assert.False(progress[lastWeek].FinishedOnTheDay);
-        Assert.Equal(0, progress.CurrentStreak(Today));
+        Assert.Equal(0, progress.CurrentStreak(_today));
     }
 
     [Fact]
     public void CurrentStreak_CountsDaysInARowEndingToday()
     {
-        var progress = FinishedOnTheirOwnDays(Today, Today.AddDays(-1), Today.AddDays(-2), Today.AddDays(-4));
+        var progress = FinishedOnTheirOwnDays(_today, _today.AddDays(-1), _today.AddDays(-2), _today.AddDays(-4));
 
-        Assert.Equal(3, progress.CurrentStreak(Today));
+        Assert.Equal(3, progress.CurrentStreak(_today));
     }
 
     [Fact]
     public void CurrentStreak_IsStillAliveBeforeTodayIsPlayed()
     {
-        var progress = FinishedOnTheirOwnDays(Today.AddDays(-1), Today.AddDays(-2));
+        var progress = FinishedOnTheirOwnDays(_today.AddDays(-1), _today.AddDays(-2));
 
-        Assert.Equal(2, progress.CurrentStreak(Today));
+        Assert.Equal(2, progress.CurrentStreak(_today));
     }
 
     [Fact]
     public void CurrentStreak_MissingYesterday_StartsAgain()
     {
-        var progress = FinishedOnTheirOwnDays(Today.AddDays(-2), Today.AddDays(-3));
+        var progress = FinishedOnTheirOwnDays(_today.AddDays(-2), _today.AddDays(-3));
 
-        Assert.Equal(0, progress.CurrentStreak(Today));
+        Assert.Equal(0, progress.CurrentStreak(_today));
     }
 
     [Fact]
     public void CurrentStreak_AnUnfinishedDayBreaksIt()
     {
-        var progress = FinishedOnTheirOwnDays(Today.AddDays(-2));
-        progress.RecordRun(Today.AddDays(-1), 4_000f, finished: false, Today.AddDays(-1));
+        var progress = FinishedOnTheirOwnDays(_today.AddDays(-2));
+        progress.RecordRun(_today.AddDays(-1), 4_000f, finished: false, _today.AddDays(-1));
 
-        Assert.Equal(0, progress.CurrentStreak(Today));
+        Assert.Equal(0, progress.CurrentStreak(_today));
     }
 
     [Theory]
@@ -92,29 +92,29 @@ public class PlayerProgressTests
     [InlineData(float.PositiveInfinity)]
     public void RecordRun_WithABadHeight_Throws(float height)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PlayerProgress().RecordRun(Today, height, false, Today));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PlayerProgress().RecordRun(_today, height, false, _today));
     }
 
     [Fact]
     public void RecordRun_ForAFutureLevel_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PlayerProgress().RecordRun(Today.AddDays(1), 10f, false, Today));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PlayerProgress().RecordRun(_today.AddDays(1), 10f, false, _today));
     }
 
     [Fact]
     public void Json_RoundTrips()
     {
-        var progress = FinishedOnTheirOwnDays(Today, Today.AddDays(-1));
-        progress.RecordRun(Today.AddDays(-5), 1_234.9f, finished: false, Today);
-        progress.RecordRun(Today.AddDays(-9), 10_000f, finished: true, Today);
+        var progress = FinishedOnTheirOwnDays(_today, _today.AddDays(-1));
+        progress.RecordRun(_today.AddDays(-5), 1_234.9f, finished: false, _today);
+        progress.RecordRun(_today.AddDays(-9), 10_000f, finished: true, _today);
 
         var loaded = PlayerProgress.FromJson(progress.ToJson());
 
         Assert.Equal(progress.Days.Count, loaded.Days.Count);
-        Assert.Equal(1_234f, loaded[Today.AddDays(-5)].BestHeight);
-        Assert.True(loaded[Today.AddDays(-9)].Finished);
-        Assert.False(loaded[Today.AddDays(-9)].FinishedOnTheDay);
-        Assert.Equal(2, loaded.CurrentStreak(Today));
+        Assert.Equal(1_234f, loaded[_today.AddDays(-5)].BestHeight);
+        Assert.True(loaded[_today.AddDays(-9)].Finished);
+        Assert.False(loaded[_today.AddDays(-9)].FinishedOnTheDay);
+        Assert.Equal(2, loaded.CurrentStreak(_today));
     }
 
     [Theory]
@@ -134,7 +134,7 @@ public class PlayerProgressTests
     [Fact]
     public void FromJson_SkipsOnlyTheEntriesThatDontMakeSense()
     {
-        const string json = """
+        const string Json = """
             {
               "version": 1,
               "days": {
@@ -147,7 +147,7 @@ public class PlayerProgressTests
             }
             """;
 
-        var progress = PlayerProgress.FromJson(json);
+        var progress = PlayerProgress.FromJson(Json);
 
         Assert.Equal(2, progress.Days.Count);
         Assert.True(progress[new DateOnly(2026, 11, 8)].FinishedOnTheDay);

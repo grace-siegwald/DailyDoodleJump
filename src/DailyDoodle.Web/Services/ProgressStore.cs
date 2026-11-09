@@ -36,7 +36,9 @@ public sealed class ProgressStore(IJSRuntime js)
             return false;
         }
 
-        var isNewBest = Progress.RecordRun(levelDate, Math.Max(0f, height), finished, today);
+        // The game never reports a bad height, but a save must never be able to crash a frame.
+        var safeHeight = float.IsFinite(height) ? Math.Max(0f, height) : 0f;
+        var isNewBest = Progress.RecordRun(levelDate, safeHeight, finished, today);
         Save();
         Changed?.Invoke();
         return isNewBest;

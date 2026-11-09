@@ -4,7 +4,7 @@ namespace DailyDoodle.Core.Tests;
 
 public class LevelDateTests
 {
-    private static readonly DateOnly Today = new(2026, 11, 9);
+    private static readonly DateOnly _today = new(2026, 11, 9);
 
     [Theory]
     [InlineData((string?)null)]
@@ -12,16 +12,16 @@ public class LevelDateTests
     [InlineData("   ")]
     public void Choose_WithNoDate_PlaysToday(string? text)
     {
-        var choice = LevelDate.Choose(text, Today);
+        var choice = LevelDate.Choose(text, _today);
 
-        Assert.Equal(Today, choice.Date);
+        Assert.Equal(_today, choice.Date);
         Assert.Null(choice.Problem);
     }
 
     [Fact]
     public void Choose_WithAPastDay_PlaysThatDay()
     {
-        var choice = LevelDate.Choose("2026-11-03", Today);
+        var choice = LevelDate.Choose("2026-11-03", _today);
 
         Assert.Equal(new DateOnly(2026, 11, 3), choice.Date);
         Assert.Null(choice.Problem);
@@ -30,9 +30,9 @@ public class LevelDateTests
     [Fact]
     public void Choose_WithToday_PlaysToday()
     {
-        var choice = LevelDate.Choose("2026-11-09", Today);
+        var choice = LevelDate.Choose("2026-11-09", _today);
 
-        Assert.Equal(Today, choice.Date);
+        Assert.Equal(_today, choice.Date);
         Assert.Null(choice.Problem);
     }
 
@@ -41,9 +41,9 @@ public class LevelDateTests
     [InlineData("2099-01-01")]
     public void Choose_WithAFutureDay_FallsBackToToday(string text)
     {
-        var choice = LevelDate.Choose(text, Today);
+        var choice = LevelDate.Choose(text, _today);
 
-        Assert.Equal(Today, choice.Date);
+        Assert.Equal(_today, choice.Date);
         Assert.NotNull(choice.Problem);
     }
 
@@ -55,9 +55,9 @@ public class LevelDateTests
     [InlineData("2026-11-03T00:00")]
     public void Choose_WithAnUnreadableDate_FallsBackToToday(string text)
     {
-        var choice = LevelDate.Choose(text, Today);
+        var choice = LevelDate.Choose(text, _today);
 
-        Assert.Equal(Today, choice.Date);
+        Assert.Equal(_today, choice.Date);
         Assert.NotNull(choice.Problem);
     }
 
@@ -67,6 +67,6 @@ public class LevelDateTests
         var day = new DateOnly(2026, 1, 5);
 
         Assert.Equal("2026-01-05", LevelDate.ToText(day));
-        Assert.Equal(day, LevelDate.Choose(LevelDate.ToText(day), Today).Date);
+        Assert.Equal(day, LevelDate.Choose(LevelDate.ToText(day), _today).Date);
     }
 }
