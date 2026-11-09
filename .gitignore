@@ -492,3 +492,6 @@ $RECYCLE.BIN/
 # Local publish output
 publish/
 $null
+
+# Sync-conflict duplicates (e.g. from OneDrive/iCloud on other machines)
+*-MegaPC*
