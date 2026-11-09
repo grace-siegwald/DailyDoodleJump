@@ -8,13 +8,13 @@
   text-decoration: none;
 }
 
-a.setting-row:hover {
-  background: var(--color-surface, #FAFAFA);
+a.setting-row:hover .setting-title {
+  text-decoration: underline;
 }
 
 .setting-icon {
   display: flex;
-  color: #555555;
+  color: var(--color-text, #555555);
 }
 
 .setting-text {

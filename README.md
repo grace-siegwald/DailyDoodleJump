@@ -139,7 +139,6 @@ and updates the height shown above the game.
 
 - Progress is saved per browser. Clearing site data, or switching devices, starts you over.
 - Days follow UTC, so a new level comes out at midnight UTC, not your local midnight.
-- The on-screen arrow buttons under the game aren't wired up yet. Use the keyboard or touch.
 - The Settings page is a placeholder.
 
 ## Contributing
@@ -161,11 +160,15 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
 - Game art by Una Roberts.
 - Inspired by [Doodle Jump](https://en.wikipedia.org/wiki/Doodle_Jump) by Lima Sky. This is a fan-made
   student project with original art and code, not affiliated with Lima Sky.
+- Fonts: [Kalam](https://fonts.google.com/specimen/Kalam) by Indian Type Foundry and
+  [Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/) by the Braille Institute, both under the
+  SIL Open Font License (copies in `src/DailyDoodle.Web/wwwroot/fonts`).
 - [KNI](https://github.com/kniEngine/kni) for running an XNA-style game in Blazor; the frame loop in
   `game-loop.js` is adapted from KNI's Blazor template.
 
 ### AI use
 
 Parts of this project were written with help from Claude (Anthropic): the calendar-to-level link,
-the finish line and win screen, saved progress and streaks, the height display, and this README.
+the finish line and win screen, saved progress and streaks, the height display, the enemy balance
+changes, the notebook-style redesign, and this README.
 Each of those commits is marked `Co-Authored-By: Claude`. The team reviewed and tested that work.

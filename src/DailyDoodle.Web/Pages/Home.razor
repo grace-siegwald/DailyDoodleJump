@@ -31,32 +31,33 @@
 
         @if (_shownState == RunState.Won)
         {
-            <div class="end-screen" role="dialog" aria-labelledby="end-title" aria-describedby="end-message">
-                <p class="end-kicker">@LevelName cleared</p>
-                <h2 id="end-title" class="end-title">You made it to the top!</h2>
+            <div class="end-screen">
+                <div class="end-note" role="dialog" aria-labelledby="end-title" aria-describedby="end-message">
+                    <h2 id="end-title" class="end-title">You made it to the top!</h2>
 
-                @if (_levelDate == _today)
-                {
-                    <p id="end-message" class="end-message">Come back tomorrow for a new level, or catch up on a day you missed.</p>
-                    @if (_streak > 0)
+                    @if (_levelDate == _today)
                     {
-                        <p class="streak">@(_streak == 1 ? "1 day" : $"{_streak} days") in a row</p>
+                        <p id="end-message" class="end-message">Come back tomorrow for a new level, or catch up on a day you missed.</p>
+                        @if (_streak > 0)
+                        {
+                            <p class="streak">@(_streak == 1 ? "1 day" : $"{_streak} days") in a row</p>
+                        }
                     }
-                }
-                else
-                {
-                    <p id="end-message" class="end-message">@_levelDate.ToString("MMMM d", System.Globalization.CultureInfo.InvariantCulture) is done. Try another day, or come back tomorrow for a new level.</p>
-                }
+                    else
+                    {
+                        <p id="end-message" class="end-message">@_levelDate.ToString("MMMM d", System.Globalization.CultureInfo.InvariantCulture) is done. Try another day, or come back tomorrow for a new level.</p>
+                    }
 
-                <div class="end-actions">
-                    <a class="end-button primary" href="calendar" @ref="_endScreenFirstButton">Play a past level</a>
-                    <button type="button" class="end-button" @onclick="ClimbAgain">Climb again</button>
+                    <div class="end-actions">
+                        <a class="sketch-button primary" href="calendar" @ref="_endScreenFirstButton">Play a past level</a>
+                        <button type="button" class="sketch-button" @onclick="ClimbAgain">Climb again</button>
+                    </div>
                 </div>
             </div>
         }
     </div>
 
-    <p class="caption">@LevelName &middot; @_levelDateText</p>
+    <p class="caption">@LevelName, @_levelDateText</p>
 </section>
 
 @if (_problem is not null)
@@ -64,8 +65,7 @@
     <p class="notice" role="status">@_problem</p>
 }
 
-<GameControls Enabled="false"
-              DisabledReason="Controls turn on once gameplay is built. For now: arrow keys or A and D." />
+<p class="how-to">Steer with the arrow keys or A and D. On a phone, hold the left or right side of the game.</p>
 
 @code {
     // Which day's level to play, from a calendar link like ?date=2026-11-03. No date means today.

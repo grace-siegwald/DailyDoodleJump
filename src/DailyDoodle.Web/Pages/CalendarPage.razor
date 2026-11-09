@@ -12,7 +12,7 @@
 <section class="card daily-card" aria-label="Daily game">
     <div class="daily-top">
         <span class="daily-title">Daily game</span>
-        <span class="daily-date">@_today.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture)</span>
+        <span class="daily-date">@_today.ToString("MMM d", CultureInfo.InvariantCulture)</span>
         <a class="play-button" href="">@(_todayDone ? "Done" : "Play")</a>
     </div>
 

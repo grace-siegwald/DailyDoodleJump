@@ -13,21 +13,21 @@
   height: 88px;
   flex: none;
   border-radius: 50%;
-  background: #E9E9E9;
-  border: 3px solid #FFFFFF;
-  box-shadow: 0 0 0 1px var(--color-border);
+  background: var(--color-paper);
+  border: var(--line);
   overflow: hidden;
 }
 
 .avatar svg {
   width: 72px;
   height: 72px;
-  fill: #B5B5B5;
+  fill: var(--color-ink-soft);
 }
 
 .name {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .handle {
@@ -49,5 +49,5 @@
   top: 0;
   left: 56px;
   right: 0;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px dashed var(--color-ink-soft);
 }

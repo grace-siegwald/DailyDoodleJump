@@ -1,21 +1,69 @@
-/* ---------- Theme: classic Apple (white / gray / green) ---------- */
+/* ---------- Theme: a doodle in the margin of a notebook ----------
+   Graph paper, ballpoint ink, and the marker colors of the game's own drawings
+   (the green O, the red X, the yellow triangle). Outlines are drawn slightly wobbly,
+   like they were inked by hand; that's the one bold thing, everything else stays plain. */
+
+/* Self-hosted (wwwroot/fonts, SIL Open Font License), so no request goes to a font service. */
+@font-face {
+  font-family: "Kalam";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/kalam-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Kalam";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/kalam-latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2");
+}
+
 :root {
-  --color-bg: #FFFFFF;
-  --color-surface: #FAFAFA;
-  --color-text: #171717;
-  --color-text-secondary: #777777;
-  --color-border: #E5E5E5;
-  --color-accent: #34A853;
-  --color-accent-soft: #EAF6EC;
-  --color-accent-text: #1E7B3A; /* green dark enough for small text on white */
-  --color-danger: #D93025;
+  --color-paper: #FCFCF9;
+  --color-grid: rgba(64, 120, 192, 0.11);
+  --color-ink: #23336E;            /* ballpoint blue: text and outlines */
+  --color-ink-soft: #5A6894;       /* secondary text, still 5.5:1 on the paper */
+  --color-marker-green: #1D8A2A;   /* the O; dark enough for white text on it */
+  --color-marker-red: #C8102E;     /* the X */
+  --color-highlight: rgba(255, 214, 10, 0.55);  /* the triangle, as a highlighter */
 
-  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  /* The names the components use. */
+  --color-bg: var(--color-paper);
+  --color-surface: #FFFFFF;
+  --color-text: var(--color-ink);
+  --color-text-secondary: var(--color-ink-soft);
+  --color-border: var(--color-ink);
+  --color-accent: var(--color-marker-green);
+  --color-accent-soft: rgba(29, 138, 42, 0.12);
+  --color-accent-text: var(--color-marker-green);
+  --color-danger: var(--color-marker-red);
 
-  --radius-sm: 10px;
-  --radius: 14px;
-  --radius-lg: 20px;
-  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --font-hand: "Kalam", "Comic Sans MS", cursive;
+  --font-stack: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+  /* Hand-inked outlines: uneven corner radii make a box look drawn rather than ruled. */
+  --line: 2px solid var(--color-ink);
+  --sketch: 18px 5px 22px 7px / 7px 22px 5px 18px;
+  --sketch-small: 12px 3px 14px 4px / 4px 14px 3px 12px;
+
+  --radius-sm: var(--sketch-small);
+  --radius: var(--sketch);
+  --radius-lg: var(--sketch);
+  --shadow-soft: none;
 
   --space-1: 0.5rem;
   --space-2: 1rem;
@@ -34,24 +82,35 @@
 
 html, body {
   margin: 0;
-  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-stack);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Graph paper: a faint blue grid, like the page the doodles were drawn on. */
+html {
+  background-color: var(--color-paper);
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 h1, h2, h3, p {
   margin: 0;
 }
 
-h1 {
-  font-size: 2rem;
+h1, h2, h3 {
+  font-family: var(--font-hand);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.1;
+}
+
+h1 {
+  font-size: 2.25rem;
 }
 
 h1:focus {
@@ -59,7 +118,9 @@ h1:focus {
 }
 
 a {
-  color: var(--color-accent-text);
+  color: var(--color-ink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 button {
@@ -68,8 +129,8 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: 3px solid var(--color-marker-red);
+  outline-offset: 3px;
 }
 
 /* ---------- Shared building blocks ---------- */
@@ -82,29 +143,62 @@ button {
   margin-bottom: var(--space-3);
 }
 
+/* A piece of paper on the page, outlined in ink. */
 .card {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
+  background: var(--color-surface);
+  border: var(--line);
+  border-radius: var(--sketch);
 }
 
 .section-label {
-  margin: var(--space-3) 0 var(--space-1) 0.5rem;
-  color: var(--color-text-secondary);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  margin: var(--space-3) 0 var(--space-1) 0.25rem;
+  color: var(--color-text);
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .label {
   color: var(--color-text-secondary);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 .muted {
   color: var(--color-text-secondary);
+}
+
+/* Buttons that look drawn: an ink outline, filled with marker for the main action. */
+.sketch-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: var(--line);
+  border-radius: var(--sketch-small);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-hand);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sketch-button.primary {
+  background: var(--color-marker-green);
+  color: #FFFFFF;
+}
+
+.sketch-button:hover {
+  transform: rotate(-1deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sketch-button:hover {
+    transform: none;
+  }
 }
 
 .icon {
@@ -112,7 +206,7 @@ button {
   height: 24px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.5;
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
   flex: none;
@@ -165,7 +259,7 @@ button {
   }
 
 .blazor-error-boundary {
-  background: #b32121;
+  background: var(--color-marker-red);
   padding: 1rem;
   color: white;
   border-radius: var(--radius-sm);
@@ -186,7 +280,7 @@ button {
 
   .loading-progress circle {
     fill: none;
-    stroke: var(--color-border);
+    stroke: var(--color-grid);
     stroke-width: 0.4rem;
     transform-origin: 50% 50%;
     transform: rotate(-90deg);

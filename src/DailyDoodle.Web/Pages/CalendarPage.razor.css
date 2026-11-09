@@ -13,7 +13,8 @@
 }
 
 .daily-title {
-  font-size: 1.125rem;
+  font-family: var(--font-hand);
+  font-size: 1.375rem;
   font-weight: 700;
 }
 
@@ -24,8 +25,10 @@
 }
 
 .streak-line {
-  color: var(--color-accent-text);
-  font-weight: 600;
+  color: var(--color-marker-green);
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
@@ -34,16 +37,14 @@
   align-items: center;
   min-height: var(--tap);
   padding: 0 var(--space-3);
-  border-radius: 999px;
-  background: var(--color-accent);
+  border: var(--line);
+  border-radius: var(--sketch-small);
+  background: var(--color-marker-green);
   color: #FFFFFF;
-  font-weight: 600;
+  font-family: var(--font-hand);
+  font-size: 1.125rem;
+  font-weight: 700;
   text-decoration: none;
-  transition: background-color 0.15s ease;
-}
-
-.play-button:hover {
-  background: var(--color-accent-text);
 }
 
 .previous-button {
@@ -52,17 +53,26 @@
   justify-content: center;
   gap: var(--space-1);
   min-height: var(--tap);
-  border: none;
-  border-radius: 999px;
-  background: var(--color-accent-soft);
-  color: var(--color-accent-text);
-  font-weight: 600;
+  border: var(--line);
+  border-radius: var(--sketch-small);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-hand);
+  font-size: 1.125rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: filter 0.15s ease;
 }
 
+.play-button:hover,
 .previous-button:hover {
-  filter: brightness(0.96);
+  transform: rotate(-1deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-button:hover,
+  .previous-button:hover {
+    transform: none;
+  }
 }
 
 .month-card {
