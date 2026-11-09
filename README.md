@@ -157,7 +157,6 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
   [grace-siegwald](https://github.com/grace-siegwald), [UnaRoberts](https://github.com/UnaRoberts),
   [Yunjong123](https://github.com/Yunjong123), [cbalder0929](https://github.com/cbalder0929) and
   [TameZombie510](https://github.com/TameZombie510).
-- Game art by Una Roberts.
 - Inspired by [Doodle Jump](https://en.wikipedia.org/wiki/Doodle_Jump) by Lima Sky. This is a fan-made
   student project with original art and code, not affiliated with Lima Sky.
 - Fonts: [Kalam](https://fonts.google.com/specimen/Kalam) by Indian Type Foundry and
@@ -165,6 +164,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
   SIL Open Font License (copies in `src/DailyDoodle.Web/wwwroot/fonts`).
 - [KNI](https://github.com/kniEngine/kni) for running an XNA-style game in Blazor; the frame loop in
   `game-loop.js` is adapted from KNI's Blazor template.
+-Una Roberts: Created game art, helped create platform and enemy functionality and worked on end screen. 
 
 ### AI use
 
@@ -172,3 +172,5 @@ Parts of this project were written with help from Claude (Anthropic): the calend
 the finish line and win screen, saved progress and streaks, the height display, the enemy balance
 changes, the notebook-style redesign, and this README.
 Each of those commits is marked `Co-Authored-By: Claude`. The team reviewed and tested that work.
+
+
