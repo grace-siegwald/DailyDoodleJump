@@ -2,6 +2,7 @@
 @implements IAsyncDisposable
 @using DailyDoodle.Core
 @inject GameSession Session
+@inject ProgressStore Store
 @inject IJSRuntime JS
 
 <PageTitle>@Session.CurrentGame.Title</PageTitle>
@@ -24,8 +25,36 @@
         The game's window. wwwroot/js/game-loop.js puts the canvas KNI draws into in here,
         in the shape of the 400x640 play area, and keeps that canvas when you leave the page.
     *@
-    <div id="canvasHolder" class="game-window" role="img"
-         aria-label="@($"{LevelName}, {_levelDateText}")"></div>
+    <div class="game-stage">
+        <div id="canvasHolder" class="game-window" role="img"
+             aria-label="@($"{LevelName}, {_levelDateText}")"></div>
+
+        @if (_shownState == RunState.Won)
+        {
+            <div class="end-screen" role="dialog" aria-labelledby="end-title" aria-describedby="end-message">
+                <p class="end-kicker">@LevelName cleared</p>
+                <h2 id="end-title" class="end-title">You made it to the top!</h2>
+
+                @if (_levelDate == _today)
+                {
+                    <p id="end-message" class="end-message">Come back tomorrow for a new level, or catch up on a day you missed.</p>
+                    @if (_streak > 0)
+                    {
+                        <p class="streak">@(_streak == 1 ? "1 day" : $"{_streak} days") in a row</p>
+                    }
+                }
+                else
+                {
+                    <p id="end-message" class="end-message">@_levelDate.ToString("MMMM d", System.Globalization.CultureInfo.InvariantCulture) is done. Try another day, or come back tomorrow for a new level.</p>
+                }
+
+                <div class="end-actions">
+                    <a class="end-button primary" href="calendar" @ref="_endScreenFirstButton">Play a past level</a>
+                    <button type="button" class="end-button" @onclick="ClimbAgain">Climb again</button>
+                </div>
+            </div>
+        }
+    </div>
 
     <p class="caption">@LevelName &middot; @_levelDateText</p>
 </section>
@@ -56,7 +85,18 @@
     // leaving Home stops the frame loop, coming back starts it again.
     private static DailyDoodleGame? _game;
 
+    // The last run whose result was saved. Static, like the game, so leaving and coming back
+    // doesn't save the same run twice.
+    private static int _savedRun;
+
     private DotNetObjectReference<Home>? _self;
+
+    // What the page last showed, so it only re-renders when something visible changes.
+    private RunState _shownState = RunState.Playing;
+    private int _streak;
+
+    private ElementReference _endScreenFirstButton;
+    private bool _focusEndScreen;
 
     // Runs on first load and again whenever the link's date changes while you're on this page.
     protected override void OnParametersSet()
@@ -69,12 +109,23 @@
         // The game outlives this page, so it may still be on another day's level.
         if (_game is not null && _game.LevelDate != _levelDate)
         {
+            SaveUnfinishedRun();
             _game.StartLevel(_levelDate);
         }
+
+        _shownState = _game?.State ?? RunState.Playing;
+        _streak = Store.Progress.CurrentStreak(_today);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (_focusEndScreen)
+        {
+            // Move keyboard focus onto the win screen's first button as it appears.
+            _focusEndScreen = false;
+            await _endScreenFirstButton.FocusAsync();
+        }
+
         if (!firstRender)
         {
             return;
@@ -97,6 +148,47 @@
 
         _game.SetCanvasPlacement(canvasLeft, canvasTop, canvasWidth);
         _game.Tick();
+
+        SaveFinishedRun();
+
+        var state = _game.State;
+        if (state != _shownState)
+        {
+            _shownState = state;
+            _focusEndScreen = state == RunState.Won;
+            StateHasChanged();
+        }
+    }
+
+    // Saves a run once it has ended, won or lost. Each run is saved once.
+    private void SaveFinishedRun()
+    {
+        if (_game is null || _game.State == RunState.Playing || _savedRun == _game.RunNumber)
+        {
+            return;
+        }
+
+        _savedRun = _game.RunNumber;
+        Store.RecordRun(_game.LevelDate, _game.HeightClimbed, finished: _game.State == RunState.Won);
+        _streak = Store.Progress.CurrentStreak(_today);
+    }
+
+    // Before a run is thrown away part-way (switching levels), keep how high it got.
+    private void SaveUnfinishedRun()
+    {
+        if (_game is null || _game.State != RunState.Playing || _savedRun == _game.RunNumber || _game.HeightClimbed <= 0f)
+        {
+            return;
+        }
+
+        _savedRun = _game.RunNumber;
+        Store.RecordRun(_game.LevelDate, _game.HeightClimbed, finished: false);
+    }
+
+    private void ClimbAgain()
+    {
+        _game?.Restart();
+        _shownState = RunState.Playing;
     }
 
     public async ValueTask DisposeAsync()

@@ -1,6 +1,8 @@
 @page "/calendar"
 @using System.Globalization
+@implements IDisposable
 @inject NavigationManager Navigation
+@inject ProgressStore Store
 
 <PageTitle>Calendar</PageTitle>
 
@@ -11,8 +13,13 @@
     <div class="daily-top">
         <span class="daily-title">Daily game</span>
         <span class="daily-date">@_today.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture)</span>
-        <a class="play-button" href="">Play</a>
+        <a class="play-button" href="">@(_todayDone ? "Done" : "Play")</a>
     </div>
+
+    @if (_streak > 0)
+    {
+        <p class="streak-line">@(_streak == 1 ? "1 day" : $"{_streak} days") in a row</p>
+    }
 
     <WeekStrip Today="_today" CompletedDays="_completedDays" OnDaySelected="PlayDay" />
 
@@ -37,17 +44,33 @@
 
     private readonly DateOnly _today = LevelDate.Today;
 
-    private HashSet<DateOnly> _completedDays = new();
+    // Days whose finish line the player has reached, from progress saved on this device.
+    private IReadOnlySet<DateOnly> _completedDays = new HashSet<DateOnly>();
+    private bool _todayDone;
+    private int _streak;
 
     private bool _showMonth;
 
     protected override void OnInitialized()
     {
-        _completedDays = new HashSet<DateOnly>
-        {
-            _today.AddDays(-1), _today.AddDays(-2), _today.AddDays(-4),
-            _today.AddDays(-5), _today.AddDays(-6), _today.AddDays(-10),
-        };
+        ShowProgress();
+        Store.Changed += OnProgressChanged;
+    }
+
+    public void Dispose() => Store.Changed -= OnProgressChanged;
+
+    private void OnProgressChanged()
+    {
+        ShowProgress();
+        StateHasChanged();
+    }
+
+    private void ShowProgress()
+    {
+        var progress = Store.Progress;
+        _completedDays = progress.FinishedDays;
+        _todayDone = progress[_today].Finished;
+        _streak = progress.CurrentStreak(_today);
     }
 
     private void ToggleMonth()

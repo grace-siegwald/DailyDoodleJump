@@ -25,6 +25,11 @@ public class DailyDoodleGame : Game
     private static readonly Color _letterboxColor = new(43, 43, 43);
     private static readonly Color _paperColor = new(250, 246, 236);
     private static readonly Color _gameOverShade = new(0, 0, 0, 110);
+    private static readonly Color _wonShade = new(250, 246, 236, 150);
+    private static readonly Color _finishInk = new(43, 43, 43);
+
+    // Size of one square in the checkered finish line, in game units.
+    private const float FinishSquare = 10f;
 
     // Keeps the back buffer the same size as the canvas on the page (see UpdateScreenFit).
     private readonly GraphicsDeviceManager _graphics;
@@ -57,6 +62,7 @@ public class DailyDoodleGame : Game
     private float _canvasCssWidth;
 
     // The current run. Replaced by StartNewRun when the player restarts.
+    private readonly LevelSettings _settings = new();
     private GameWorld _world = null!;
     private PlatformSpawner _spawner = null!;
 
@@ -75,12 +81,33 @@ public class DailyDoodleGame : Game
     /// <summary>The day whose level is being played.</summary>
     public DateOnly LevelDate { get; private set; }
 
+    /// <summary>Whether the current run is still going, fell, or reached the finish line.</summary>
+    public RunState State => _world switch
+    {
+        null => RunState.Playing,
+        { IsWon: true } => RunState.Won,
+        { IsGameOver: true } => RunState.Fell,
+        _ => RunState.Playing,
+    };
+
+    /// <summary>The highest the current run has got, in game units.</summary>
+    public float HeightClimbed => _world?.HeightClimbed ?? 0f;
+
+    /// <summary>How far above the start the finish line is, in game units.</summary>
+    public float FinishHeight => (float)_settings.FinishHeight;
+
+    /// <summary>Counts runs, so the page can tell a new run from the one it has already saved.</summary>
+    public int RunNumber { get; private set; }
+
     /// <summary>Switches to another day's level and starts it from the bottom.</summary>
     public void StartLevel(DateOnly date)
     {
         LevelDate = date;
         StartNewRun();
     }
+
+    /// <summary>Starts the same level again from the bottom.</summary>
+    public void Restart() => StartNewRun();
 
     protected override void Initialize()
     {
@@ -138,7 +165,11 @@ public class DailyDoodleGame : Game
     {
         UpdateScreenFit();
 
-        if (_world.IsGameOver)
+        if (_world.IsWon)
+        {
+            // The page shows the win screen and its buttons; nothing to do here.
+        }
+        else if (_world.IsGameOver)
         {
             if (IsRestartPressed())
             {
@@ -166,6 +197,7 @@ public class DailyDoodleGame : Game
         _spriteBatch.Begin(blendState: BlendState.NonPremultiplied, transformMatrix: toScreen);
 
         FillRectangle(Vector2.Zero, new Vector2(VirtualWidth, VirtualHeight), _paperColor);
+        DrawFinishLine();
 
         foreach (var gameObject in _world.Objects)
         {
@@ -187,6 +219,11 @@ public class DailyDoodleGame : Game
                 new Vector2(50, 200),
                 Color.White);
         }
+        else if (_world.IsWon)
+        {
+            // Fade the level a little so the page's win screen reads clearly on top.
+            FillRectangle(Vector2.Zero, new Vector2(VirtualWidth, VirtualHeight), _wonShade);
+        }
 
         _spriteBatch.End();
 
@@ -196,9 +233,34 @@ public class DailyDoodleGame : Game
     // The chosen day's level, from the beginning. Everyone playing that day's level gets the same platforms.
     private void StartNewRun()
     {
-        _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForDate(LevelDate)));
-        _world = new GameWorld(new Player(_spawner.PlayerStart), []);
+        _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForDate(LevelDate), _settings));
+        _world = new GameWorld(new Player(_spawner.PlayerStart), [], FinishHeight);
         _spawner.SpawnAhead(_world);
+        RunNumber++;
+    }
+
+    // A checkered strip across the play area at the finish line, once it scrolls into view.
+    private void DrawFinishLine()
+    {
+        var top = _world.FinishLineY - _world.CameraTop - FinishSquare;
+        if (top > VirtualHeight || top + (FinishSquare * 2f) < 0f)
+        {
+            return;
+        }
+
+        for (var row = 0; row < 2; row++)
+        {
+            for (var column = 0; column * FinishSquare < VirtualWidth; column++)
+            {
+                if ((row + column) % 2 == 0)
+                {
+                    FillRectangle(
+                        new Vector2(column * FinishSquare, top + (row * FinishSquare)),
+                        new Vector2(FinishSquare, FinishSquare),
+                        _finishInk);
+                }
+            }
+        }
     }
 
     // Subclasses must come before Platform, or the compiler reports them as unreachable.

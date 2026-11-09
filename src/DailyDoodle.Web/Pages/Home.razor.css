@@ -34,11 +34,17 @@
 }
 
 /* The game window. Shrinks with height so the play area's 400x640 shape
-   never letterboxes on short or wide screens. */
-.game-window {
+   never letterboxes on short or wide screens. The win screen sits on top of it. */
+.game-stage {
+  position: relative;
   width: min(100%, calc(58vh * 400 / 640));
   aspect-ratio: 400 / 640;
   margin: 0 auto;
+}
+
+.game-window {
+  width: 100%;
+  height: 100%;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -65,4 +71,80 @@
   text-align: center;
   color: var(--color-text-secondary);
   font-size: 0.875rem;
+}
+
+/* ---------- Win screen, over the game ---------- */
+.end-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: var(--space-3);
+  text-align: center;
+  border-radius: var(--radius);
+}
+
+.end-kicker {
+  color: var(--color-accent-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.end-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.end-message {
+  max-width: 22ch;
+  color: var(--color-text);
+}
+
+.streak {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.end-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: min(100%, 16rem);
+  margin-top: var(--space-1);
+}
+
+.end-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.end-button.primary {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #FFFFFF;
+}
+
+.end-button:hover {
+  filter: brightness(0.96);
 }

@@ -4,7 +4,7 @@ namespace DailyDoodle.Core;
 
 /// <summary>
 /// Holds everything in a level and runs the rules: movement, landing on platforms, screen wrap,
-/// scrolling and game over. Uses no KNI types, so all of it can be unit tested without a browser.
+/// scrolling, reaching the finish line and game over. Uses no KNI types, so all of it can be unit tested without a browser.
 /// </summary>
 public class GameWorld
 {
@@ -33,13 +33,25 @@ public class GameWorld
     private readonly float _startBottom;
     private float _unsimulatedSeconds;
 
-    public GameWorld(Player player, IEnumerable<GameObject> objects)
+    /// <param name="player">The player, standing where the run starts.</param>
+    /// <param name="objects">Platforms and anything else already in the level.</param>
+    /// <param name="finishHeight">
+    /// How far above the start the finish line is. Reaching it wins the run. Leave it out for a
+    /// level with no end.
+    /// </param>
+    public GameWorld(Player player, IEnumerable<GameObject> objects, float finishHeight = float.PositiveInfinity)
     {
         ArgumentNullException.ThrowIfNull(player);
         ArgumentNullException.ThrowIfNull(objects);
 
+        if (float.IsNaN(finishHeight) || finishHeight <= 0f)
+        {
+            throw new ArgumentOutOfRangeException(nameof(finishHeight), finishHeight, "The finish line must be above the start.");
+        }
+
         Player = player;
         _startBottom = player.Bottom;
+        FinishHeight = finishHeight;
 
         foreach (var gameObject in objects)
         {
@@ -61,7 +73,20 @@ public class GameWorld
     /// <summary>The highest the player has got above where they started. Good basis for a score.</summary>
     public float HeightClimbed { get; private set; }
 
+    /// <summary>How far above the start the finish line is. Infinity for a level with no end.</summary>
+    public float FinishHeight { get; }
+
+    /// <summary>World Y of the finish line (the player wins when their feet cross it).</summary>
+    public float FinishLineY => _startBottom - FinishHeight;
+
+    /// <summary>True once the player falls off the bottom of the screen or touches an enemy.</summary>
     public bool IsGameOver { get; private set; }
+
+    /// <summary>True once the player reaches the finish line.</summary>
+    public bool IsWon { get; private set; }
+
+    /// <summary>True once the run is over, won or lost. Nothing moves after that.</summary>
+    public bool HasEnded => IsGameOver || IsWon;
 
     public void Add(GameObject gameObject)
     {
@@ -87,7 +112,7 @@ public class GameWorld
             throw new ArgumentOutOfRangeException(nameof(deltaSeconds), deltaSeconds, "Elapsed time must be zero or more.");
         }
 
-        if (IsGameOver)
+        if (HasEnded)
         {
             return;
         }
@@ -97,7 +122,7 @@ public class GameWorld
         // Run as many whole steps as fit in the time we were given. Any leftover time carries
         // over to the next frame, so no time is lost.
         _unsimulatedSeconds += Math.Min(deltaSeconds, MaxFrameSeconds);
-        while (_unsimulatedSeconds >= StepSeconds && !IsGameOver)
+        while (_unsimulatedSeconds >= StepSeconds && !HasEnded)
         {
             Step(StepSeconds);
             _unsimulatedSeconds -= StepSeconds;
@@ -120,6 +145,10 @@ public class GameWorld
         }
 
         CheckEnemyCollisions();
+        if (IsGameOver)
+        {
+            return;
+        }
 
         // A rising player can never land, so skip the platform checks while going up.
         if (Player.IsFalling)
@@ -129,6 +158,14 @@ public class GameWorld
 
         FollowPlayer();
         HeightClimbed = Math.Max(HeightClimbed, _startBottom - Player.Bottom);
+
+        if (HeightClimbed >= FinishHeight)
+        {
+            // A spring can carry the player a little past the line in one step; count it as the line.
+            HeightClimbed = FinishHeight;
+            IsWon = true;
+            return;
+        }
 
         if (Player.Top > CameraTop + Height)
         {

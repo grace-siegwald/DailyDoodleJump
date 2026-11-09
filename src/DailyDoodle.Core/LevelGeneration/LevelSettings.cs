@@ -21,6 +21,12 @@ public sealed record LevelSettings
     /// <summary>Fraction of the theoretical max we actually allow (leaves room for human error).</summary>
     public double SafetyMargin { get; init; } = 0.85;
 
+    /// <summary>
+    /// How far above the start each day's finish line is. Reaching it wins the day.
+    /// About a minute and a half of climbing.
+    /// </summary>
+    public double FinishHeight { get; init; } = 10_000;
+
     /// <summary>Height at which difficulty reaches 100%.</summary>
     public double HeightForMaxDifficulty { get; init; } = 20000;
 

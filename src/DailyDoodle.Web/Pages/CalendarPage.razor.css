@@ -23,6 +23,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+.streak-line {
+  color: var(--color-accent-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 .play-button {
   display: inline-flex;
   align-items: center;
