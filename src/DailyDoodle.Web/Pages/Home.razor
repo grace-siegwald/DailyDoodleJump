@@ -16,8 +16,8 @@
             <span class="stat-value" aria-label="Score not available yet">&mdash;</span>
         </div>
         <div class="stat stat-end">
-            <span class="stat-label">Level</span>
-            <span class="stat-value" aria-label="Level not available yet">&mdash;</span>
+            <span class="stat-label">@HighestLabel</span>
+            <span class="stat-value">@DisplayHeight.Format(_shownBest)</span>
         </div>
     </div>
 
@@ -95,6 +95,13 @@
     private RunState _shownState = RunState.Playing;
     private int _streak;
 
+    // Best height on this level today: the saved best, or the current run once it climbs past that.
+    private float _shownBest;
+
+    private string HighestLabel => _levelDate == _today
+        ? "Highest Today"
+        : $"Highest {_levelDate.ToString("MMM d", System.Globalization.CultureInfo.InvariantCulture)}";
+
     private ElementReference _endScreenFirstButton;
     private bool _focusEndScreen;
 
@@ -115,6 +122,7 @@
 
         _shownState = _game?.State ?? RunState.Playing;
         _streak = Store.Progress.CurrentStreak(_today);
+        _shownBest = BestSoFar();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -151,13 +159,22 @@
 
         SaveFinishedRun();
 
+        // Re-render only when something on screen changes, not every frame.
         var state = _game.State;
-        if (state != _shownState)
+        var best = BestSoFar();
+        if (state != _shownState || DisplayHeight.From(best) != DisplayHeight.From(_shownBest))
         {
+            _focusEndScreen = state == RunState.Won && _shownState != RunState.Won;
             _shownState = state;
-            _focusEndScreen = state == RunState.Won;
+            _shownBest = best;
             StateHasChanged();
         }
+    }
+
+    private float BestSoFar()
+    {
+        var saved = Store.Progress[_levelDate].BestHeight;
+        return _game is not null && _game.LevelDate == _levelDate ? Math.Max(saved, _game.HeightClimbed) : saved;
     }
 
     // Saves a run once it has ended, won or lost. Each run is saved once.
