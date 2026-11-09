@@ -93,6 +93,9 @@ public class DailyDoodleGame : Game
     /// <summary>The highest the current run has got, in game units.</summary>
     public float HeightClimbed => _world?.HeightClimbed ?? 0f;
 
+    /// <summary>How high the player is right now, in game units (see <see cref="GameWorld.CurrentHeight"/>).</summary>
+    public float CurrentHeight => _world?.CurrentHeight ?? 0f;
+
     /// <summary>How far above the start the finish line is, in game units.</summary>
     public float FinishHeight => (float)_settings.FinishHeight;
 

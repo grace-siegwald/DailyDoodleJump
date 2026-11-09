@@ -73,6 +73,12 @@ public class GameWorld
     /// <summary>The highest the player has got above where they started. Good basis for a score.</summary>
     public float HeightClimbed { get; private set; }
 
+    /// <summary>
+    /// How far the player's feet are above where they started, right now. Goes up and down with each
+    /// jump, and below zero if they fall past the start.
+    /// </summary>
+    public float CurrentHeight => _startBottom - Player.Bottom;
+
     /// <summary>How far above the start the finish line is. Infinity for a level with no end.</summary>
     public float FinishHeight { get; }
 

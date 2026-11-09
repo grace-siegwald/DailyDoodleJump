@@ -12,8 +12,8 @@
 <section class="card game-card" aria-label="Game">
     <div class="stats">
         <div class="stat">
-            <span class="stat-label">Score</span>
-            <span class="stat-value" aria-label="Score not available yet">&mdash;</span>
+            <span class="stat-label">Height</span>
+            <span class="stat-value">@DisplayHeight.Format(_shownHeight)</span>
         </div>
         <div class="stat stat-end">
             <span class="stat-label">@HighestLabel</span>
@@ -95,6 +95,9 @@
     private RunState _shownState = RunState.Playing;
     private int _streak;
 
+    // How high the player is right now.
+    private float _shownHeight;
+
     // Best height on this level today: the saved best, or the current run once it climbs past that.
     private float _shownBest;
 
@@ -123,6 +126,7 @@
         _shownState = _game?.State ?? RunState.Playing;
         _streak = Store.Progress.CurrentStreak(_today);
         _shownBest = BestSoFar();
+        _shownHeight = _game?.CurrentHeight ?? 0f;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -162,11 +166,15 @@
         // Re-render only when something on screen changes, not every frame.
         var state = _game.State;
         var best = BestSoFar();
-        if (state != _shownState || DisplayHeight.From(best) != DisplayHeight.From(_shownBest))
+        var height = _game.CurrentHeight;
+        if (state != _shownState ||
+            DisplayHeight.From(best) != DisplayHeight.From(_shownBest) ||
+            DisplayHeight.From(height) != DisplayHeight.From(_shownHeight))
         {
             _focusEndScreen = state == RunState.Won && _shownState != RunState.Won;
             _shownState = state;
             _shownBest = best;
+            _shownHeight = height;
             StateHasChanged();
         }
     }
