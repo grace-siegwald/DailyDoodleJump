@@ -17,9 +17,9 @@ SOURCE = Path(__file__).parent / "source"
 OUTPUT = Path(__file__).parent.parent / "src" / "DailyDoodle.Web" / "wwwroot" / "images"
 
 # Width in pixels of each finished image: roughly 3-4 pixels per game unit at the widest the game
-# ever draws it (platforms up to 90 units wide, the player 40). Bigger wastes download size and
-# makes outlines break up when the game shrinks it; smaller looks blurry on sharp screens.
-WIDTHS = {"Player.png": 160}
+# ever draws it (platforms up to 90 units wide, the player 40, enemies 48). Bigger wastes download
+# size and makes outlines break up when the game shrinks it; smaller looks blurry on sharp screens.
+WIDTHS = {"Player.png": 160, "Enemy_1.png": 192, "Enemy_2.png": 192, "Enemy_3.png": 192}
 DEFAULT_WIDTH = 300
 
 # Pixels at least this see-through (0-255 alpha) count as empty when cropping.

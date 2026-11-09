@@ -150,7 +150,7 @@ public class GameWorld
             }
         }
 
-        CheckEnemyCollisions();
+        CheckEnemyCollisions(previousBottom);
         if (IsGameOver)
         {
             return;
@@ -225,16 +225,26 @@ public class GameWorld
         }
     }
 
-    //for enemies 
-    private void CheckEnemyCollisions()
+    // Falling onto an enemy from above defeats it and bounces the player, like a platform.
+    // Any other touch ends the run. "From above" uses where the feet were last step, like TryLand.
+    private void CheckEnemyCollisions(float previousBottom)
     {
         foreach (var enemy in _objects.OfType<Enemy>())
         {
-            if (Player.Overlaps(enemy))
+            if (!enemy.IsActive || !enemy.Touches(Player))
             {
-                IsGameOver = true;
+                continue;
+            }
+
+            if (Player.IsFalling && previousBottom <= enemy.HitTop)
+            {
+                enemy.IsActive = false;
+                Player.Bounce();
                 return;
             }
+
+            IsGameOver = true;
+            return;
         }
     }
 

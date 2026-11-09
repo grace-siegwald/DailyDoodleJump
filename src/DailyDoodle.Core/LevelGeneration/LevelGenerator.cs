@@ -24,6 +24,7 @@ public sealed class LevelGenerator
     {
         _s = settings ?? new LevelSettings();
         _rng = new SeededRandom(seed);
+        Seed = seed;
 
         // Wide, safe starting platform centered under the player.
         double startWidth = _s.PlatformWidth * 1.5;
@@ -31,6 +32,9 @@ public sealed class LevelGenerator
     }
 
     public LevelSettings Settings => _s;
+
+    /// <summary>The seed this level was made from. Other seeded parts of the level (enemies) start from it too.</summary>
+    public ulong Seed { get; }
 
     /// <summary>All live platforms, ordered bottom to top.</summary>
     public IReadOnlyList<Platform> Platforms => _platforms;

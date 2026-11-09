@@ -23,6 +23,15 @@ public sealed class PlatformSpawner
     /// <summary>World Y of the top of the starting platform: 80 units above the bottom of the first screen.</summary>
     public const float StartPlatformTop = GameWorld.Height - 80f;
 
+    /// <summary>No enemies below this height, so the first part of every climb is a warm-up.</summary>
+    public const double EnemyStartHeight = 3_000;
+
+    /// <summary>Chance that a platform above <see cref="EnemyStartHeight"/> has an enemy hovering over it.</summary>
+    public const double EnemyChance = 0.06;
+
+    /// <summary>How far an enemy patrols to each side of where it appears.</summary>
+    public const float EnemyPatrolRange = 90f;
+
     private readonly LevelGenerator _generator;
 
     // The generator numbers platforms 0, 1, 2... in the order it makes them.
@@ -69,15 +78,11 @@ public sealed class PlatformSpawner
             if (generated.Id >= _nextIdToSpawn)
             {
                 world.Add(ToGameObject(generated));
-                if (generated.Id > 40)
+                if (HasEnemy(generated))
                 {
-                    Random random = new(generated.Id);
-
-                    if (random.NextDouble() < 0.08)
-                    {
-                        SpawnEnemy(world, generated);
-                    }
+                    world.Add(EnemyOver(generated));
                 }
+
                 nextId = Math.Max(nextId, generated.Id + 1);
             }
         }
@@ -112,31 +117,36 @@ public sealed class PlatformSpawner
         };
     }
 
-    //for enemies
-    private static void SpawnEnemy(
-    GameWorld world,
-    GeneratedPlatform platform)
+    // Whether a platform gets an enemy. Decided from the level's seed and the platform's number,
+    // so it's the same every time that day's level is played, but different from day to day.
+    private bool HasEnemy(GeneratedPlatform platform)
     {
-        var position = new Vector2(
-            (float)platform.X +
-            ((float)platform.Width / 2f) -
-            (Enemy.DefaultWidth / 2f),
+        if (platform.Y < EnemyStartHeight)
+        {
+            return false;
+        }
 
-            ToWorldY(platform.Y) - 60f);
+        var random = new SeededRandom(_generator.Seed ^ ((ulong)platform.Id * 0x9E3779B97F4A7C15UL));
+        return random.Chance(EnemyChance);
+    }
 
-        EnemyType type =
-            platform.Id switch
-            {
-                < 30 => EnemyType.Slow,
-                < 60 => EnemyType.Medium,
-                _ => EnemyType.Fast
-            };
+    /// <summary>Which kind of enemy appears at a height: slow ones first, faster ones higher up.</summary>
+    public static EnemyType EnemyTypeAt(double height) => height switch
+    {
+        < 5_000 => EnemyType.Slow,
+        < 8_000 => EnemyType.Medium,
+        _ => EnemyType.Fast,
+    };
 
-        world.Add(
-            new Enemy(
-                position,
-                type,
-                0f,
-                GameWorld.Width));
+    // An enemy hovering just over the middle of a platform, patrolling a short way to each side.
+    private static Enemy EnemyOver(GeneratedPlatform platform)
+    {
+        var centerX = (float)(platform.X + (platform.Width / 2));
+        var position = new Vector2(centerX - (Enemy.DefaultWidth / 2f), ToWorldY(platform.Y) - 60f);
+
+        var minX = Math.Max(0f, centerX - (Enemy.DefaultWidth / 2f) - EnemyPatrolRange);
+        var maxX = Math.Min(GameWorld.Width, centerX + (Enemy.DefaultWidth / 2f) + EnemyPatrolRange);
+
+        return new Enemy(position, EnemyTypeAt(platform.Y), minX, maxX);
     }
 }
