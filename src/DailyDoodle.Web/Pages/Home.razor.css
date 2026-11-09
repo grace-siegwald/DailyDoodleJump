@@ -59,3 +59,10 @@
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
 }
+
+.notice {
+  margin-top: var(--space-1);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}

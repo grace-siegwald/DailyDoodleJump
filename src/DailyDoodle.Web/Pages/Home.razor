@@ -25,18 +25,32 @@
         in the shape of the 400x640 play area, and keeps that canvas when you leave the page.
     *@
     <div id="canvasHolder" class="game-window" role="img"
-         aria-label="@($"Today's level, {todayText}")"></div>
+         aria-label="@($"{LevelName}, {_levelDateText}")"></div>
 
-    <p class="caption">Today's level &middot; @todayText</p>
+    <p class="caption">@LevelName &middot; @_levelDateText</p>
 </section>
+
+@if (_problem is not null)
+{
+    <p class="notice" role="status">@_problem</p>
+}
 
 <GameControls Enabled="false"
               DisabledReason="Controls turn on once gameplay is built. For now: arrow keys or A and D." />
 
 @code {
-    // UTC date, matching DailySeed.ForToday(), so the label and the level always agree.
-    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
-    private string todayText = "";
+    // Which day's level to play, from a calendar link like ?date=2026-11-03. No date means today.
+    [SupplyParameterFromQuery(Name = "date")]
+    public string? DateText { get; set; }
+
+    private DateOnly _today;
+    private DateOnly _levelDate;
+    private string _levelDateText = "";
+
+    // Why the link's date wasn't used (unreadable, or a day that hasn't happened yet). Null when it was.
+    private string? _problem;
+
+    private string LevelName => _levelDate == _today ? "Today's level" : "Past level";
 
     // KNI can only start one game per page load, so the game outlives this page:
     // leaving Home stops the frame loop, coming back starts it again.
@@ -44,9 +58,19 @@
 
     private DotNetObjectReference<Home>? _self;
 
-    protected override void OnInitialized()
+    // Runs on first load and again whenever the link's date changes while you're on this page.
+    protected override void OnParametersSet()
     {
-        todayText = today.ToString("MMMM d, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        // UTC date, matching DailySeed, so the label and the level always agree.
+        _today = LevelDate.Today;
+        (_levelDate, _problem) = LevelDate.Choose(DateText, _today);
+        _levelDateText = _levelDate.ToString("MMMM d, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+        // The game outlives this page, so it may still be on another day's level.
+        if (_game is not null && _game.LevelDate != _levelDate)
+        {
+            _game.StartLevel(_levelDate);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -67,7 +91,7 @@
     {
         if (_game is null)
         {
-            _game = new DailyDoodleGame();
+            _game = new DailyDoodleGame(_levelDate);
             _game.Run();
         }
 

@@ -60,14 +60,26 @@ public class DailyDoodleGame : Game
     private GameWorld _world = null!;
     private PlatformSpawner _spawner = null!;
 
-    public DailyDoodleGame()
+    /// <param name="levelDate">Which day's level to start on (see <see cref="LevelGeneration.LevelDate"/>).</param>
+    public DailyDoodleGame(DateOnly levelDate)
     {
+        LevelDate = levelDate;
         _graphics = new GraphicsDeviceManager(this);
 
         // Run exactly one Update per browser frame, with the real elapsed time.
         // Fixed-step physics happens in GameWorld.Advance, so the game plays
         // the same on 60 Hz and 120 Hz screens and can be tested without KNI.
         IsFixedTimeStep = false;
+    }
+
+    /// <summary>The day whose level is being played.</summary>
+    public DateOnly LevelDate { get; private set; }
+
+    /// <summary>Switches to another day's level and starts it from the bottom.</summary>
+    public void StartLevel(DateOnly date)
+    {
+        LevelDate = date;
+        StartNewRun();
     }
 
     protected override void Initialize()
@@ -181,13 +193,12 @@ public class DailyDoodleGame : Game
         base.Draw(gameTime);
     }
 
-    // Today's level, from the beginning. Everyone playing today gets the same platforms.
+    // The chosen day's level, from the beginning. Everyone playing that day's level gets the same platforms.
     private void StartNewRun()
     {
-        _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForToday()));
+        _spawner = new PlatformSpawner(new LevelGenerator(DailySeed.ForDate(LevelDate)));
         _world = new GameWorld(new Player(_spawner.PlayerStart), []);
         _spawner.SpawnAhead(_world);
-    
     }
 
     // Subclasses must come before Platform, or the compiler reports them as unreachable.

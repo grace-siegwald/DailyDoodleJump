@@ -35,7 +35,7 @@
 
 @code {
 
-    private readonly DateOnly _today = DateOnly.FromDateTime(DateTime.UtcNow);
+    private readonly DateOnly _today = LevelDate.Today;
 
     private HashSet<DateOnly> _completedDays = new();
 
@@ -55,8 +55,9 @@
         _showMonth = !_showMonth;
     }
 
+    // Opens that day's level on the Home page. Today's level gets the plain link, like the Play button.
     private void PlayDay(DateOnly day)
     {
-        Navigation.NavigateTo($"?date={day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}");
+        Navigation.NavigateTo(day == _today ? "" : $"?date={LevelDate.ToText(day)}");
     }
 }
