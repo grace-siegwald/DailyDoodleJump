@@ -22,4 +22,4 @@ try {
 } catch {
   document.documentElement.dataset.theme = "light";
 }
-S
+
