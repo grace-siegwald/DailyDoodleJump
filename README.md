@@ -170,6 +170,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
 - Grace Siegwald: Built Blazor scaffolding, managed repository, designed game and implemented game functionality.
 - Yunjong Heo: Built the calendar page (Calendar tab, week strip, and month calendar) and its reusable components (CalendarDay, WeekStrip, MonthCalendar).
 - Mia Graham: Added persistent dark mode and player statistics to Settings, clarified browser data storage, and researched account and storage options for player profiles and progress.
+- Max Polancic: Created random level generation prototype and worked on the random level generation. 
 
 ### AI use
 
