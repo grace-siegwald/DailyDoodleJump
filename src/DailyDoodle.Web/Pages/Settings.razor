@@ -22,6 +22,16 @@
     </div>
 </section>
 
+
+<h2 class="section-label">Your progress</h2>
+<div class="card group">
+    <SettingRow Title="Current streak"
+                Value="@(ProgressStore.Progress.CurrentStreak(LevelDate.Today).ToString() + " days")" />
+    <SettingRow Title="Levels completed"
+                Value="@ProgressStore.Progress.FinishedDays.Count.ToString()" />
+    <SettingRow Title="Best height"
+                Value="@(ProgressStore.Progress.Days.Values.Select(day => day.BestHeight).DefaultIfEmpty(0f).Max().ToString("0"))" />
+</div>
 <h2 class="section-label">Account</h2>
 <div class="card group">
     <SettingRow Title="Account" Description="Sign-in isn't available yet.">
