@@ -304,3 +304,17 @@ button {
   .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
   }
+/* Dark notebook theme */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #171c29;
+  --color-grid: rgba(150, 175, 225, 0.09);
+  --color-ink: #dce5ff;
+  --color-ink-soft: #b3bfdc;
+  --color-surface: #222a3b;
+  --color-marker-red: #ff8da1;
+  --color-highlight: rgba(255, 214, 10, 0.22);
+  --color-accent-soft: rgba(114, 218, 131, 0.14);
+  --color-accent-text: #8ee49c;
+  --color-danger: #ff8da1;
+}
