@@ -168,6 +168,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
 ## Contributors
 - Una Roberts: Created game art, helped create platform and enemy functionality and worked on end screen.
 - Grace Siegwald: Built Blazor scaffolding, managed repository, designed game and implemented game functionality.
+- Yunjong Heo: Built the calendar page (Calendar tab, week strip, and month calendar) and its reusable components (CalendarDay, WeekStrip, MonthCalendar).
 
 ### AI use
 
