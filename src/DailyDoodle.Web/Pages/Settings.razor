@@ -9,19 +9,71 @@
 
 <h1 class="visually-hidden">Profile &amp; Settings</h1>
 
-<section class="card profile-card" aria-label="Profile">
-    <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-            <circle cx="32" cy="24" r="11" />
-            <path d="M12 54c0-11 9-18 20-18s20 7 20 18z" />
-        </svg>
+<section class="card profile-card" aria-label="Local player profile">
+    <div class="avatar" aria-hidden="true" style="font-size: 2.5rem;">
+        @(_avatar switch
+        {
+            "rocket" => "🚀",
+            "frog" => "🐸",
+            "bear" => "🐻",
+            "elephant" => "🐘",
+            "car" => "🚗",
+            "balloon" => "🎈",
+            _ => "⭐"
+        })
     </div>
-    <div class="profile-text">
-        <div class="name">Player</div>
+
+    <div class="profile-text" style="flex: 1; min-width: 0;">
+        <div class="name">@_nickname</div>
         <div class="handle">Playing on this device</div>
+
+        @if (_editingProfile)
+        {
+            <div style="display: grid; gap: 0.5rem; margin-top: 0.75rem;">
+                <label for="player-nickname">Nickname</label>
+                <input id="player-nickname"
+                       @bind="_nicknameInput"
+                       maxlength="20"
+                       autocomplete="off"
+                       style="width: 100%; min-width: 0;" />
+
+                <label for="player-avatar">Avatar</label>
+                <select id="player-avatar" @bind="_avatarInput">
+                    <option value="star">⭐ Star</option>
+                    <option value="rocket">🚀 Rocket</option>
+                    <option value="frog">🐸 Frog</option>
+                    <option value="bear">🐻 Bear</option>
+                    <option value="elephant">🐘 Elephant</option>
+                    <option value="car">🚗 Car</option>
+                    <option value="balloon">🎈 Balloon</option>
+                </select>
+            </div>
+        }
+
+        <p role="status">@_profileMessage</p>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 0.75rem;">
+            @if (_editingProfile)
+            {
+                <button type="button"
+                        class="sketch-button"
+                        disabled="@(!_profileReady)"
+                        @onclick="SaveProfile">
+                    Save profile
+                </button>
+            }
+            else
+            {
+                <button type="button"
+                        class="sketch-button"
+                        disabled="@(!_profileReady)"
+                        @onclick="() => _editingProfile = true">
+                    Edit
+                </button>
+            }
+        </div>
     </div>
 </section>
-
 
 <h2 class="section-label">Your progress</h2>
 <div class="card group">
@@ -84,17 +136,88 @@
             </svg>
         </Icon>
     </SettingRow>
- @code {
+@code {
     private bool _isDark;
     private bool _themeReady;
+    private bool _profileReady;
+    private bool _editingProfile;
+    private string _nickname = "Player";
+    private string _nicknameInput = "Player";
+    private string _avatar = "star";
+    private string _avatarInput = "star";
+    private string _profileMessage = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (!firstRender)
         {
-            _isDark = await JS.InvokeAsync<bool>("dailyDoodleTheme.get");
-            _themeReady = true;
-            StateHasChanged();
+            return;
+        }
+
+        _isDark = await JS.InvokeAsync<bool>("dailyDoodleTheme.get");
+        _themeReady = true;
+
+        try
+        {
+            var profile = await JS.InvokeAsync<System.Text.Json.JsonElement>(
+                "dailyDoodleProfile.load");
+
+            _nickname = profile.GetProperty("nickname").GetString() ?? "Player";
+            _avatar = profile.GetProperty("avatar").GetString() ?? "star";
+            _nicknameInput = _nickname;
+            _avatarInput = _avatar;
+            _profileReady = true;
+        }
+        catch (JSException)
+        {
+            _profileMessage = "Profile could not load. Refresh the page to try again.";
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task SaveProfile()
+    {
+        var nickname = _nicknameInput.Trim();
+
+        if (nickname.Length == 0 || nickname.Length > 20)
+        {
+            _profileMessage = "Enter a nickname between 1 and 20 characters.";
+            return;
+        }
+
+        string[] allowedAvatars =
+        [
+            "star", "rocket", "frog", "bear",
+            "elephant", "car", "balloon"
+        ];
+
+        if (!allowedAvatars.Contains(_avatarInput))
+        {
+            _profileMessage = "Choose an avatar from the list.";
+            return;
+        }
+
+        try
+        {
+            var saved = await JS.InvokeAsync<bool>(
+                "dailyDoodleProfile.save", nickname, _avatarInput);
+
+            if (!saved)
+            {
+                _profileMessage = "Could not save. Browser storage may be unavailable.";
+                return;
+            }
+
+            _nickname = nickname;
+            _nicknameInput = nickname;
+            _avatar = _avatarInput;
+            _profileMessage = "Profile saved on this browser.";
+            _editingProfile = false;
+        }
+        catch (JSException)
+        {
+            _profileMessage = "Could not save your profile. Please refresh and try again.";
         }
     }
 
@@ -103,5 +226,6 @@
         _isDark = !_isDark;
         await JS.InvokeVoidAsync("dailyDoodleTheme.set", _isDark);
     }
+}
 }
 </div>

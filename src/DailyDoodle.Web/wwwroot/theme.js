@@ -22,4 +22,35 @@ try {
 } catch {
   document.documentElement.dataset.theme = "light";
 }
+window.dailyDoodleProfile = {
+  load: function () {
+    try {
+      const profile = JSON.parse(
+        localStorage.getItem("dailyDoodleJump.profile") || "{}"
+      );
 
+      return {
+        nickname: typeof profile?.nickname === "string"
+          ? profile.nickname.trim().slice(0, 20) || "Player"
+          : "Player",
+        avatar: ["star", "rocket", "frog", "bear", "elephant", "car", "balloon"].includes(profile?.avatar)
+          ? profile.avatar
+          : "star"
+      };
+    } catch {
+      return { nickname: "Player", avatar: "star" };
+    }
+  },
+
+  save: function (nickname, avatar) {
+    try {
+      localStorage.setItem("dailyDoodleJump.profile", JSON.stringify({
+        nickname: nickname,
+        avatar: avatar
+      }));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+};
