@@ -164,7 +164,10 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
   SIL Open Font License (copies in `src/DailyDoodle.Web/wwwroot/fonts`).
 - [KNI](https://github.com/kniEngine/kni) for running an XNA-style game in Blazor; the frame loop in
   `game-loop.js` is adapted from KNI's Blazor template.
--Una Roberts: Created game art, helped create platform and enemy functionality and worked on end screen. 
+
+## Contributors
+- Una Roberts: Created game art, helped create platform and enemy functionality and worked on end screen.
+- Grace Siegwald: Built Blazor scaffolding, managed repository, designed game and implemented game functionality.
 
 ### AI use
 
